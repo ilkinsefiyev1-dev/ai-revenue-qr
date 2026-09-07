@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Bistro — Admin Panel</title>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f5f7;
+    color: #222;
+}
+
+header {
+    background: #111827;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.section {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+}
+
+.section h2 {
+    margin-top: 0;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.stat {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.stat h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    color: #666;
+}
+
+.stat strong {
+    font-size: 28px;
+}
+
+.ai-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+
+.ai-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.ai-stat {
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.ai-stat strong {
+    display: block;
+    font-size: 25px;
+    margin-top: 8px;
+}
+
+button {
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.primary {
+    background: #111827;
+    color: white;
+}
+
+.green {
+    background: #16a34a;
+    color: white;
+}
+
+.orange {
+    background: #f59e0b;
+    color: white;
+}
+
+.red {
+    background: #dc2626;
+    color: white;
+}
+
+.gray {
+    background: #e5e7eb;
+    color: #222;
+}
+
+input {
+    padding: 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.add-product {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.product:last-child {
+    border-bottom: none;
+}
+
+.product-info strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.product-actions {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.inactive {
+    opacity: 0.45;
+}
+
+.order {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.order-items {
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.ai-tag {
+    display: inline-block;
+    background: #16a34a;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.status-buttons {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+/* QR */
+
+.table-settings {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.qr-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.qr-card {
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 18px;
+    text-align: center;
+    background: white;
+}
+
+.qr-card h3 {
+    margin-top: 0;
+}
+
+.qr-code {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.qr-url {
+    font-size: 11px;
+    color: #777;
+    word-break: break-all;
+    margin-bottom: 12px;
+}
+
+.qr-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+}
+
+@media(max-width: 800px) {
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .ai-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .qr-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media(max-width: 500px) {
+
+    .ai-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .qr-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .add-product {
+        flex-direction: column;
+    }
+}
+
+@media print {
+
+    body {
+        background: white;
+    }
+
+    header,
+    .no-print,
+    .section:not(.qr-section) {
+        display: none !important;
+    }
+
+    .qr-section {
+        box-shadow: none;
+    }
+
+    .qr-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .qr-card {
+        page-break-inside: avoid;
+        border: 1px solid #000;
+    }
+
+    .qr-buttons {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🍽️ AI Bistro — Restoran İdarə Paneli</h1>
+</header>
+
+<div class="container">
+
+<!-- STATISTICS -->
+
+<div class="section">
+    <h2>📊 Ümumi statistika</h2>
+
+    <div class="stats">
+
+        <div class="stat">
+            <h3>Sifarişlər</h3>
+            <strong id="orderCount">0</strong>
+        </div>
+
+        <div class="stat">
+            <h3>Satış</h3>
+            <strong id="sales">0.00 AZN</strong>
+        </div>
+
+        <div class="stat">
+            <h3>AI əlavə satış</h3>
+            <strong id="aiSales">0.00 AZN</strong>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- AI REVENUE ENGINE -->
+
+<div class="section ai-box">
+
+    <h2>🤖 AI Revenue Engine</h2>
+
+    <div class="ai-grid">
+
+        <div class="ai-stat">
+            AI istifadə olunan sifarişlər
+            <strong id="aiOrders">0</strong>
+        </div>
+
+        <div class="ai-stat">
+            AI qəbul faizi
+            <strong id="aiRate">0%</strong>
+        </div>
+
+        <div class="ai-stat">
+            AI əlavə gəliri
+            <strong id="aiRevenue">0.00 AZN</strong>
+        </div>
+
+        <div class="ai-stat">
+            Orta AI gəliri
+            <strong id="avgAiRevenue">0.00 AZN</strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- QR TABLE MANAGEMENT -->
+
+<div class="section qr-section">
+
+    <h2>📱 QR və Masa idarəsi</h2>
+
+    <p>
+        Hər masa üçün ayrıca QR kod yarat.
+        Müştəri QR kodu skan etdikdə avtomatik həmin masaya daxil olacaq.
+    </p>
+
+    <div class="table-settings no-print">
+
+        <label>
+            Masa sayı:
+        </label>
+
+        <input
+            type="number"
+            id="tableCount"
+            min="1"
+            max="100"
+            value="10"
+        >
+
+        <button class="primary" onclick="generateTables()">
+            🔄 QR-ları yarat
+        </button>
+
+        <button class="green" onclick="window.print()">
+            🖨️ Hamısını çap et
+        </button>
+
+    </div>
+
+    <div id="qrGrid" class="qr-grid"></div>
+
+</div>
+
+
+<!-- MENU -->
+
+<div class="section">
+
+    <h2>🍔 Menyu idarəsi</h2>
+
+    <div class="add-product">
+
+        <input
+            type="text"
+            id="productName"
+            placeholder="Məhsul adı"
+        >
+
+        <input
+            type="number"
+            id="productPrice"
+            placeholder="Qiymət"
+            step="0.01"
+        >
+
+        <button class="green" onclick="addProduct()">
+            ➕ Məhsul əlavə et
+        </button>
+
+    </div>
+
+    <div id="menuList"></div>
+
+</div>
+
+
+<!-- ORDERS -->
+
+<div class="section">
+
+    <h2>📋 Sifarişlər</h2>
+
+    <div id="ordersList"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   MENU
+========================= */
+
+const defaultMenu = [
+    {
+        id: 1,
+        name: "Chicken Burger",
+        price: 9,
+        active: true
+    },
+    {
+        id: 2,
+        name: "Fries",
+        price: 3,
+        active: true
+    },
+    {
+        id: 3,
+        name: "Cola",
+        price: 2,
+        active: true
+    }
+];
+
+
+function getMenu() {
+
+    let menu = JSON.parse(localStorage.getItem("menu"));
+
+    if (!menu) {
+
+        menu = defaultMenu;
+
+        localStorage.setItem(
+            "menu",
+            JSON.stringify(menu)
+        );
+    }
+
+    return menu;
+}
+
+
+/* =========================
+   MENU RENDER
+========================= */
+
+function loadMenu() {
+
+    const menu = getMenu();
+
+    const container =
+        document.getElementById("menuList");
+
+    container.innerHTML = "";
+
+    menu.forEach(product => {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "product " +
+            (!product.active ? "inactive" : "");
+
+        div.innerHTML = `
+
+            <div class="product-info">
+
+                <strong>
+                    ${product.name}
+                </strong>
+
+                <span>
+                    ${Number(product.price).toFixed(2)} AZN
+                </span>
+
+            </div>
+
+            <div class="product-actions">
+
+                <button
+                    class="orange"
+                    onclick="editProduct(${product.id})">
+                    ✏️ Qiymət
+                </button>
+
+                <button
+                    class="gray"
+                    onclick="toggleProduct(${product.id})">
+                    ${product.active
+                        ? "⛔ Deaktiv"
+                        : "✅ Aktiv"}
+                </button>
+
+                <button
+                    class="red"
+                    onclick="deleteProduct(${product.id})">
+                    🗑️ Sil
+                </button>
+
+            </div>
+        `;
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+/* =========================
+   ADD PRODUCT
+========================= */
+
+function addProduct() {
+
+    const name =
+        document.getElementById("productName").value.trim();
+
+    const price =
+        Number(
+            document.getElementById("productPrice").value
+        );
+
+    if (!name || !price || price <= 0) {
+
+        alert("Məhsul adı və düzgün qiymət daxil et.");
+
+        return;
+    }
+
+    const menu = getMenu();
+
+    menu.push({
+
+        id: Date.now(),
+
+        name: name,
+
+        price: price,
+
+        active: true
+
+    });
+
+    localStorage.setItem(
+        "menu",
+        JSON.stringify(menu)
+    );
+
+    document.getElementById("productName").value = "";
+
+    document.getElementById("productPrice").value = "";
+
+    loadMenu();
+
+    alert("Məhsul əlavə edildi! ✅");
+}
+
+
+/* =========================
+   EDIT PRODUCT
+========================= */
+
+function editProduct(id) {
+
+    const menu = getMenu();
+
+    const product =
+        menu.find(p => p.id === id);
+
+    if (!product) return;
+
+    const newPrice =
+        prompt(
+            `"${product.name}" yeni qiyməti:`,
+            product.price
+        );
+
+    if (newPrice === null) return;
+
+    const price = Number(newPrice);
+
+    if (!price || price <= 0) {
+
+        alert("Düzgün qiymət daxil et.");
+
+        return;
+    }
+
+    product.price = price;
+
+    localStorage.setItem(
+        "menu",
+        JSON.stringify(menu)
+    );
+
+    loadMenu();
+
+    alert("Qiymət dəyişdirildi! ✅");
+}
+
+
+/* =========================
+   TOGGLE PRODUCT
+========================= */
+
+function toggleProduct(id) {
+
+    const menu = getMenu();
+
+    const product =
+        menu.find(p => p.id === id);
+
+    if (!product) return;
+
+    product.active = !product.active;
+
+    localStorage.setItem(
+        "menu",
+        JSON.stringify(menu)
+    );
+
+    loadMenu();
+}
+
+
+/* =========================
+   DELETE PRODUCT
+========================= */
+
+function deleteProduct(id) {
+
+    const menu = getMenu();
+
+    const product =
+        menu.find(p => p.id === id);
+
+    if (!product) return;
+
+    if (
+        !confirm(
+            `"${product.name}" silinsin?`
+        )
+    ) return;
+
+    const newMenu =
+        menu.filter(p => p.id !== id);
+
+    localStorage.setItem(
+        "menu",
+        JSON.stringify(newMenu)
+    );
+
+    loadMenu();
+}
+
+
+/* =========================
+   ORDERS
+========================= */
+
+function getOrders() {
+
+    return JSON.parse(
+        localStorage.getItem("orders") || "[]"
+    );
+}
+
+
+function loadOrders() {
+
+    const orders = getOrders();
+
+    const container =
+        document.getElementById("ordersList");
+
+    container.innerHTML = "";
+
+    let totalSales = 0;
+
+    let aiOrders = 0;
+
+    let aiRevenue = 0;
+
+    orders.forEach(order => {
+
+        totalSales += Number(order.total || 0);
+
+        if (order.aiUsed) {
+
+            aiOrders++;
+
+            const comboItems =
+                (order.items || []).filter(
+                    item =>
+                        item.name &&
+                        item.name.includes("Combo")
+                );
+
+            comboItems.forEach(item => {
+
+                aiRevenue +=
+                    Number(item.price || 0);
+
+            });
+
+        }
+
+    });
+
+
+    document.getElementById("orderCount")
+        .textContent = orders.length;
+
+
+    document.getElementById("sales")
+        .textContent =
+        totalSales.toFixed(2) + " AZN";
+
+
+    document.getElementById("aiSales")
+        .textContent =
+        aiRevenue.toFixed(2) + " AZN";
+
+
+    document.getElementById("aiOrders")
+        .textContent = aiOrders;
+
+
+    const aiRate =
+        orders.length
+            ? (aiOrders / orders.length * 100)
+            : 0;
+
+
+    document.getElementById("aiRate")
+        .textContent =
+        aiRate.toFixed(0) + "%";
+
+
+    document.getElementById("aiRevenue")
+        .textContent =
+        aiRevenue.toFixed(2) + " AZN";
+
+
+    const avgAi =
+        aiOrders
+            ? aiRevenue / aiOrders
+            : 0;
+
+
+    document.getElementById("avgAiRevenue")
+        .textContent =
+        avgAi.toFixed(2) + " AZN";
+
+
+    if (!orders.length) {
+
+        container.innerHTML =
+            "<p>Hələ sifariş yoxdur.</p>";
+
+        return;
+    }
+
+
+    [...orders]
+        .reverse()
+        .forEach(order => {
+
+            const div =
+                document.createElement("div");
+
+            div.className = "order";
+
+            const items =
+                (order.items || [])
+                .map(
+                    item =>
+                        `${item.name} — ${Number(item.price).toFixed(2)} AZN`
+                )
+                .join("<br>");
+
+
+            div.innerHTML = `
+
+                <div class="order-header">
+
+                    <span>
+                        🪑 Masa №${order.table || 1}
+                    </span>
+
+                    <span>
+                        ${Number(order.total || 0).toFixed(2)} AZN
+                    </span>
+
+                </div>
+
+                <div class="order-items">
+                    ${items}
+                </div>
+
+                ${
+                    order.aiUsed
+                    ? '<span class="ai-tag">🤖 AI tövsiyəsi istifadə edildi</span>'
+                    : ''
+                }
+
+                <div>
+                    Status:
+                    <strong>
+                        ${order.status || "Yeni sifariş"}
+                    </strong>
+                </div>
+
+                <div class="status-buttons">
+
+                    <button
+                        class="orange"
+                        onclick="changeStatus(${order.id}, 'Hazırlanır')">
+                        👨‍🍳 Hazırlanır
+                    </button>
+
+                    <button
+                        class="green"
+                        onclick="changeStatus(${order.id}, 'Hazırdır')">
+                        ✅ Hazırdır
+                    </button>
+
+                    <button
+                        class="gray"
+                        onclick="changeStatus(${order.id}, 'Təqdim edildi')">
+                        🍽️ Təqdim edildi
+                    </button>
+
+                </div>
+
+            `;
+
+            container.appendChild(div);
+
+        });
+
+}
+
+
+/* =========================
+   CHANGE STATUS
+========================= */
+
+function changeStatus(id, status) {
+
+    const orders = getOrders();
+
+    const order =
+        orders.find(o => o.id === id);
+
+    if (!order) return;
+
+    order.status = status;
+
+    localStorage.setItem(
+        "orders",
+        JSON.stringify(orders)
+    );
+
+    loadOrders();
+}
+
+
+/* =========================
+   QR SYSTEM
+========================= */
+
+function getTableCount() {
+
+    return Number(
+        localStorage.getItem("tableCount") || 10
+    );
+}
+
+
+function generateTables() {
+
+    const input =
+        document.getElementById("tableCount");
+
+    let count =
+        Number(input.value);
+
+    if (!count || count < 1) {
+
+        alert("Ən azı 1 masa olmalıdır.");
+
+        return;
+    }
+
+    if (count > 100) {
+
+        alert("Maksimum 100 masa.");
+
+        return;
+    }
+
+    localStorage.setItem(
+        "tableCount",
+        count
+    );
+
+    renderQRs();
+}
+
+
+function renderQRs() {
+
+    const count =
+        getTableCount();
+
+    document.getElementById("tableCount")
+        .value = count;
+
+    const grid =
+        document.getElementById("qrGrid");
+
+    grid.innerHTML = "";
+
+
+    /*
+       index.html-in yerləşdiyi ünvanı tapırıq.
+    */
+
+    const baseUrl =
+        new URL(
+            "index.html",
+            window.location.href
+        ).href;
+
+
+    for (let i = 1; i <= count; i++) {
+
+        const url =
+            baseUrl + "?table=" + i;
+
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "qr-card";
+
+
+        const qrId =
+            "qr-" + i;
+
+
+        card.innerHTML = `
+
+            <h3>🪑 Masa №${i}</h3>
+
+            <div
+                id="${qrId}"
+                class="qr-code">
+            </div>
+
+            <div class="qr-url">
+                ${url}
+            </div>
+
+            <div class="qr-buttons">
+
+                <button
+                    class="primary"
+                    onclick="openQR('${url}')">
+                    🔗 Aç
+                </button>
+
+                <button
+                    class="green"
+                    onclick="printSingleQR(${i})">
+                    🖨️ Çap
+                </button>
+
+            </div>
+
+        `;
+
+
+        grid.appendChild(card);
+
+
+        new QRCode(
+            document.getElementById(qrId),
+            {
+                text: url,
+                width: 180,
+                height: 180
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================
+   OPEN QR URL
+========================= */
+
+function openQR(url) {
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+}
+
+
+/* =========================
+   PRINT SINGLE QR
+========================= */
+
+function printSingleQR(tableNumber) {
+
+    const baseUrl =
+        new URL(
+            "index.html",
+            window.location.href
+        ).href;
+
+    const url =
+        baseUrl +
+        "?table=" +
+        tableNumber;
+
+
+    const win =
+        window.open(
+            "",
+            "_blank"
+        );
+
+
+    win.document.write(`
+
+        <!DOCTYPE html>
+
+        <html>
+
+        <head>
+
+            <title>Masa ${tableNumber} QR</title>
+
+            <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"><\/script>
+
+            <style>
+
+                body {
+                    font-family: Arial;
+                    text-align: center;
+                    padding-top: 50px;
+                }
+
+                #qr {
+                    display: flex;
+                    justify-content: center;
+                    margin: 30px;
+                }
+
+                .table {
+                    font-size: 30px;
+                    font-weight: bold;
+                }
+
+                .text {
+                    font-size: 18px;
+                }
+
+            </style>
+
+        </head>
+
+        <body>
+
+            <div class="table">
+                🪑 MASA №${tableNumber}
+            </div>
+
+            <div id="qr"></div>
+
+            <div class="text">
+                Menyu və sifariş üçün QR kodu skan edin
+            </div>
+
+            <script>
+
+                new QRCode(
+                    document.getElementById("qr"),
+                    {
+                        text: "${url}",
+                        width: 300,
+                        height: 300
+                    }
+                );
+
+                setTimeout(
+                    function() {
+                        window.print();
+                    },
+                    800
+                );
+
+            <\/script>
+
+        </body>
+
+        </html>
+
+    `);
+
+    win.document.close();
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadMenu();
+
+loadOrders();
+
+renderQRs();
+
+</script>
+
+</body>
+</html>
