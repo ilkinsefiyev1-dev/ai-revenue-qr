@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>AI Bistro</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -23,25 +22,24 @@
         header {
             background: #111827;
             color: white;
-            padding: 20px;
+            padding: 22px;
             text-align: center;
         }
 
         header h1 {
             margin: 0;
-            font-size: 26px;
+            font-size: 27px;
         }
 
         .table-name {
             margin-top: 8px;
             font-size: 17px;
-            opacity: 0.9;
         }
 
         .container {
             max-width: 700px;
             margin: auto;
-            padding: 20px;
+            padding: 18px;
         }
 
         .section {
@@ -49,10 +47,10 @@
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 18px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.07);
+            box-shadow: 0 3px 15px rgba(0,0,0,.07);
         }
 
-        .section h2 {
+        h2 {
             margin-top: 0;
         }
 
@@ -86,10 +84,9 @@
         button {
             border: none;
             border-radius: 9px;
-            padding: 11px 16px;
+            padding: 11px 15px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
         }
 
         .add-button {
@@ -97,27 +94,24 @@
             color: white;
         }
 
+        /* AI */
         .ai-box {
+            margin-top: 20px;
             background: #f0fdf4;
             border: 2px solid #22c55e;
-            border-radius: 14px;
+            border-radius: 15px;
             padding: 18px;
-            margin-top: 18px;
         }
 
         .ai-title {
-            font-size: 19px;
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .ai-text {
-            color: #444;
             line-height: 1.5;
-        }
-
-        .combo-price {
-            margin-top: 10px;
+            color: #444;
         }
 
         .old-price {
@@ -127,24 +121,26 @@
         }
 
         .new-price {
-            font-size: 20px;
-            font-weight: bold;
             color: #16a34a;
+            font-size: 21px;
+            font-weight: bold;
         }
 
         .save-text {
             color: #16a34a;
             font-weight: bold;
-            margin-top: 5px;
+            margin-top: 7px;
         }
 
         .combo-button {
-            margin-top: 14px;
+            width: 100%;
+            margin-top: 15px;
             background: #16a34a;
             color: white;
-            width: 100%;
+            font-size: 16px;
         }
 
+        /* CART */
         .cart-item {
             display: flex;
             justify-content: space-between;
@@ -172,53 +168,27 @@
         }
 
         .empty {
-            color: #777;
             text-align: center;
-            padding: 10px;
+            color: #777;
+            padding: 15px;
         }
 
-        .loading {
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             text-align: center;
-            padding: 20px;
-            color: #777;
+            font-weight: bold;
         }
 
         .success {
             background: #dcfce7;
             color: #166534;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            font-weight: bold;
-            margin-top: 15px;
         }
 
         .error {
             background: #fee2e2;
             color: #991b1b;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-
-        @media (max-width: 500px) {
-            .container {
-                padding: 12px;
-            }
-
-            .section {
-                padding: 16px;
-            }
-
-            .product-name {
-                font-size: 16px;
-            }
-
-            button {
-                padding: 10px 12px;
-            }
         }
     </style>
 </head>
@@ -233,7 +203,6 @@
     </div>
 </header>
 
-
 <div class="container">
 
     <!-- MENU -->
@@ -242,12 +211,10 @@
         <h2>🍔 Menyu</h2>
 
         <div id="menuList">
-            <div class="loading">
-                Menyu yüklənir...
-            </div>
+            Menyu yüklənir...
         </div>
 
-        <!-- AI -->
+        <!-- AI RECOMMENDATION -->
         <div id="aiRecommendation" class="ai-box" style="display:none;">
 
             <div class="ai-title">
@@ -255,16 +222,21 @@
             </div>
 
             <div class="ai-text">
-                Chicken Burger seçdiniz.<br>
-                Yanında Fries + Cola götürmək istəyərsiniz?
+                Chicken Burger seçdiniz! 🍔<br><br>
+                Yanında Fries + Cola götürsəniz,
+                xüsusi Combo ilə daha sərfəli olacaq.
             </div>
 
-            <div class="combo-price">
-                <span class="old-price">5.00 AZN</span>
+            <div style="margin-top:12px;">
+
+                <span class="old-price">
+                    5.00 AZN
+                </span>
 
                 <span class="new-price">
                     4.50 AZN
                 </span>
+
             </div>
 
             <div class="save-text">
@@ -281,7 +253,6 @@
         </div>
 
     </div>
-
 
     <!-- CART -->
     <div class="section">
@@ -315,11 +286,9 @@
 
     </div>
 
-
     <div id="message"></div>
 
 </div>
-
 
 <script>
 
@@ -330,8 +299,11 @@
 const SUPABASE_URL =
     "https://lwxnxcebzhbpjmrboosf.supabase.co";
 
+/*
+   BURAYA ÖZ PUBLISHABLE KEY-İNİ YAZ
+*/
 const SUPABASE_KEY =
-    "sb_publishable_i2_aVgOrcZNYuwzlUGtK-w_kRhPDgmQ";
+    "BURAYA_SENIN_PUBLISHABLE_KEYIN";
 
 const supabaseClient =
     window.supabase.createClient(
@@ -357,7 +329,7 @@ document.getElementById("tableNumber").textContent =
 
 
 /* =====================================================
-   MENU
+   DEFAULT MENU
 ===================================================== */
 
 const defaultMenu = [
@@ -386,23 +358,25 @@ const defaultMenu = [
 ];
 
 
+/* =====================================================
+   MENU
+===================================================== */
+
 function getMenu() {
 
-    let menu;
+    let menu = null;
 
     try {
 
-        menu =
-            JSON.parse(
-                localStorage.getItem("menu")
-            );
+        menu = JSON.parse(
+            localStorage.getItem("menu")
+        );
 
     } catch (error) {
 
         menu = null;
 
     }
-
 
     if (!Array.isArray(menu) || menu.length === 0) {
 
@@ -412,7 +386,6 @@ function getMenu() {
             "menu",
             JSON.stringify(menu)
         );
-
     }
 
     return menu;
@@ -429,7 +402,7 @@ let aiUsed = false;
 
 
 /* =====================================================
-   HTML ESCAPE
+   ESCAPE HTML
 ===================================================== */
 
 function escapeHtml(text) {
@@ -451,7 +424,7 @@ function loadMenu() {
 
     const menu =
         getMenu().filter(
-            product => product.active !== false
+            item => item.active !== false
         );
 
     const menuList =
@@ -459,28 +432,25 @@ function loadMenu() {
 
     menuList.innerHTML = "";
 
-
-    if (!menu.length) {
+    if (menu.length === 0) {
 
         menuList.innerHTML = `
             <div class="empty">
-                Hazırda aktiv məhsul yoxdur.
+                Aktiv məhsul yoxdur.
             </div>
         `;
 
         return;
     }
 
-
     menu.forEach(product => {
 
-        const item =
+        const div =
             document.createElement("div");
 
-        item.className = "menu-item";
+        div.className = "menu-item";
 
-
-        item.innerHTML = `
+        div.innerHTML = `
 
             <div class="product-info">
 
@@ -503,10 +473,9 @@ function loadMenu() {
 
         `;
 
-        menuList.appendChild(item);
+        menuList.appendChild(div);
 
     });
-
 
     updateAIRecommendation();
 }
@@ -520,12 +489,12 @@ function addToCart(productId) {
 
     const menu = getMenu();
 
-
     const product =
         menu.find(
-            p => Number(p.id) === Number(productId)
+            item =>
+                Number(item.id) ===
+                Number(productId)
         );
-
 
     if (!product) {
 
@@ -533,7 +502,6 @@ function addToCart(productId) {
 
         return;
     }
-
 
     cart.push({
 
@@ -545,22 +513,19 @@ function addToCart(productId) {
 
     });
 
-
     renderCart();
 
     updateAIRecommendation();
-
 
     console.log(
         "Səbət:",
         cart
     );
-
 }
 
 
 /* =====================================================
-   AI RECOMMENDATION
+   🤖 AI RECOMMENDATION
 ===================================================== */
 
 function updateAIRecommendation() {
@@ -570,39 +535,34 @@ function updateAIRecommendation() {
             "aiRecommendation"
         );
 
-
     if (!aiBox) {
-
-        console.error(
-            "AI box tapılmadı!"
-        );
-
         return;
     }
 
-
     /*
-       Məhsulun adına yox,
-       həm adına həm də məzmununa baxırıq.
+       Chicken Burger seçilib?
+       ID 1-dirsə də AI işləyəcək.
     */
 
-    const hasBurger =
+    const burgerExists =
         cart.some(item => {
 
             const name =
                 String(item.name)
-                    .toLowerCase()
-                    .trim();
+                    .toLowerCase();
 
             return (
-                name.includes("chicken burger") ||
+                Number(item.id) === 1 ||
                 name.includes("burger")
             );
-
         });
 
 
-    const hasFries =
+    /*
+       Fries seçilib?
+    */
+
+    const friesExists =
         cart.some(item => {
 
             const name =
@@ -610,11 +570,14 @@ function updateAIRecommendation() {
                     .toLowerCase();
 
             return name.includes("fries");
-
         });
 
 
-    const hasCola =
+    /*
+       Cola seçilib?
+    */
+
+    const colaExists =
         cart.some(item => {
 
             const name =
@@ -622,11 +585,14 @@ function updateAIRecommendation() {
                     .toLowerCase();
 
             return name.includes("cola");
-
         });
 
 
-    const hasCombo =
+    /*
+       Combo seçilib?
+    */
+
+    const comboExists =
         cart.some(item => {
 
             const name =
@@ -634,75 +600,51 @@ function updateAIRecommendation() {
                     .toLowerCase();
 
             return name.includes("combo");
-
         });
 
 
-    console.log(
-        "AI CHECK:",
-        {
-            cart: cart,
-            hasBurger: hasBurger,
-            hasFries: hasFries,
-            hasCola: hasCola,
-            hasCombo: hasCombo
-        }
-    );
-
-
     /*
-       ƏSAS AI QAYDASI
-
-       Burger varsa
-       Fries yoxdursa
-       Cola yoxdursa
-       Combo yoxdursa
-
-       AI görünsün.
+       AI-nin əsas şərti:
+       Burger VAR
+       Fries YOX
+       Cola YOX
+       Combo YOX
     */
 
     if (
-        hasBurger &&
-        !hasFries &&
-        !hasCola &&
-        !hasCombo
+        burgerExists &&
+        !friesExists &&
+        !colaExists &&
+        !comboExists
     ) {
 
         aiBox.style.display = "block";
 
-        aiBox.style.visibility = "visible";
-
-        aiBox.style.opacity = "1";
-
-
         console.log(
-            "🤖 AI TÖVSİYƏSİ AKTİVDİR"
+            "🤖 AI TÖVSİYƏSİ GÖRÜNÜR"
         );
 
     } else {
 
         aiBox.style.display = "none";
-
     }
-
 }
 
 
 /* =====================================================
-   ADD AI COMBO
+   ADD COMBO
 ===================================================== */
 
 function addCombo() {
 
-    const comboAlreadyAdded =
+    const comboExists =
         cart.some(item =>
             String(item.name)
                 .toLowerCase()
                 .includes("combo")
         );
 
-
-    if (comboAlreadyAdded) {
+    if (comboExists) {
 
         alert(
             "Combo artıq səbətdədir."
@@ -710,7 +652,6 @@ function addCombo() {
 
         return;
     }
-
 
     cart.push({
 
@@ -723,22 +664,17 @@ function addCombo() {
 
         price:
             4.50
-
     });
 
-
     aiUsed = true;
-
 
     renderCart();
 
     updateAIRecommendation();
 
-
     alert(
         "🤖 AI Combo səbətə əlavə edildi!"
     );
-
 }
 
 
@@ -753,12 +689,11 @@ function removeFromCart(index) {
     renderCart();
 
     updateAIRecommendation();
-
 }
 
 
 /* =====================================================
-   RENDER CART
+   CART
 ===================================================== */
 
 function renderCart() {
@@ -778,8 +713,7 @@ function renderCart() {
             "cartTotal"
         );
 
-
-    if (!cart.length) {
+    if (cart.length === 0) {
 
         cartList.innerHTML = `
             <div class="empty">
@@ -793,12 +727,9 @@ function renderCart() {
         return;
     }
 
-
     cartList.innerHTML = "";
 
-
     let total = 0;
-
 
     cart.forEach(
         (item, index) => {
@@ -806,16 +737,13 @@ function renderCart() {
             total +=
                 Number(item.price);
 
-
             const div =
                 document.createElement(
                     "div"
                 );
 
-
             div.className =
                 "cart-item";
-
 
             div.innerHTML = `
 
@@ -832,9 +760,9 @@ function renderCart() {
                         onclick="removeFromCart(${index})"
                         style="
                             margin-left:8px;
-                            padding:5px 8px;
                             background:#fee2e2;
                             color:#991b1b;
+                            padding:5px 8px;
                         "
                     >
                         ✕
@@ -844,21 +772,17 @@ function renderCart() {
 
             `;
 
-
             cartList.appendChild(div);
 
         }
     );
 
-
     totalElement.textContent =
         total.toFixed(2) +
         " AZN";
 
-
     totalArea.style.display =
         "block";
-
 }
 
 
@@ -869,11 +793,10 @@ function renderCart() {
 function calculateTotal() {
 
     return cart.reduce(
-        (sum, item) =>
-            sum + Number(item.price),
+        (total, item) =>
+            total + Number(item.price),
         0
     );
-
 }
 
 
@@ -888,66 +811,58 @@ function showMessage(text, type) {
             "message"
         );
 
-
     message.innerHTML = `
-        <div class="${type}">
+        <div class="message ${type}">
             ${text}
         </div>
     `;
-
 }
 
 
 /* =====================================================
-   SAVE LOCAL COPY
+   LOCAL ORDER
 ===================================================== */
 
-function saveLocalOrder(orderData) {
+function saveLocalOrder(order) {
 
     let orders = [];
 
     try {
 
-        orders =
-            JSON.parse(
-                localStorage.getItem("orders") ||
-                "[]"
-            );
+        orders = JSON.parse(
+            localStorage.getItem("orders") ||
+            "[]"
+        );
 
     } catch (error) {
 
         orders = [];
-
     }
-
 
     orders.push({
 
         id: Date.now(),
 
         table:
-            orderData.table_number,
+            order.table_number,
 
         items:
-            orderData.items,
+            order.items,
 
         total:
-            orderData.total,
+            order.total,
 
         aiUsed:
-            orderData.ai_used,
+            order.ai_used,
 
         status:
-            orderData.status
-
+            order.status
     });
-
 
     localStorage.setItem(
         "orders",
         JSON.stringify(orders)
     );
-
 }
 
 
@@ -957,7 +872,7 @@ function saveLocalOrder(orderData) {
 
 async function placeOrder() {
 
-    if (!cart.length) {
+    if (cart.length === 0) {
 
         alert(
             "Səbət boşdur."
@@ -966,10 +881,8 @@ async function placeOrder() {
         return;
     }
 
-
     const total =
         calculateTotal();
-
 
     const orderItems =
         cart.map(item => ({
@@ -984,7 +897,6 @@ async function placeOrder() {
                 Number(item.price)
 
         }));
-
 
     const orderData = {
 
@@ -1002,28 +914,21 @@ async function placeOrder() {
 
         status:
             "Yeni sifariş"
-
     };
-
 
     const button =
         document.querySelector(
             ".order-button"
         );
 
-
     button.disabled = true;
 
     button.textContent =
         "⏳ Göndərilir...";
 
-
     try {
 
-        const {
-            data,
-            error
-        } =
+        const result =
             await supabaseClient
                 .from("orders")
                 .insert([
@@ -1031,77 +936,63 @@ async function placeOrder() {
                 ])
                 .select();
 
-
-        if (error) {
+        if (result.error) {
 
             console.error(
-                "SUPABASE ERROR:",
-                error
+                "Supabase error:",
+                result.error
             );
 
-            throw error;
-
+            throw result.error;
         }
 
-
         console.log(
-            "✅ Sifariş Supabase-ə getdi:",
-            data
+            "Sifariş göndərildi:",
+            result.data
         );
-
 
         saveLocalOrder(
             orderData
         );
 
-
         showMessage(
-            "✅ Sifariş uğurla göndərildi! Restoran sifarişi aldı.",
+            "✅ Sifariş uğurla göndərildi!",
             "success"
         );
-
 
         alert(
             "Sifariş göndərildi! 🍽️"
         );
 
-
         cart = [];
 
         aiUsed = false;
-
 
         renderCart();
 
         updateAIRecommendation();
 
-
     } catch (error) {
 
         console.error(
-            "SİFARİŞ XƏTASI:",
+            "Sifariş xətası:",
             error
         );
 
-
         showMessage(
-            "❌ Sifariş göndərilmədi. Supabase bağlantısını yoxla.",
+            "❌ Sifariş göndərilmədi. Supabase məlumatlarını yoxla.",
             "error"
         );
 
-
         alert(
-            "Sifariş göndərilmədi. ❌"
+            "Sifariş göndərilmədi! ❌"
         );
-
     }
-
 
     button.disabled = false;
 
     button.textContent =
         "📤 Sifarişi göndər";
-
 }
 
 
@@ -1114,17 +1005,6 @@ loadMenu();
 renderCart();
 
 updateAIRecommendation();
-
-
-/*
-   TEST ÜÇÜN:
-   Browser Console-da:
-
-   addToCart(1)
-
-   yazsan Chicken Burger əlavə olunacaq
-   və AI tövsiyəsi çıxmalıdır.
-*/
 
 </script>
 
