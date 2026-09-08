@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>AI Bistro</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 * {
     box-sizing: border-box;
 }
@@ -98,6 +92,11 @@ button {
     font-size: 14px;
 }
 
+button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
 .add-button {
     background: #111827;
     color: white;
@@ -155,9 +154,46 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 13px 0;
     border-bottom: 1px solid #eee;
     gap: 10px;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item-left {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.cart-item-name {
+    font-weight: bold;
+}
+
+.cart-item-ai {
+    color: #16a34a;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.cart-item-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cart-item-price {
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.remove-button {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 7px 10px;
+    font-size: 13px;
 }
 
 .cart-total {
@@ -175,13 +211,6 @@ button {
     color: white;
     font-size: 17px;
     padding: 15px;
-}
-
-.remove-button {
-    margin-left: 8px;
-    padding: 5px 8px;
-    background: #fee2e2;
-    color: #991b1b;
 }
 
 .empty {
@@ -236,51 +265,45 @@ button {
         padding: 10px 12px;
     }
 
+    .cart-item {
+        align-items: flex-start;
+    }
+
+    .cart-item-right {
+        flex-direction: column;
+        align-items: flex-end;
+    }
 }
-
 </style>
-
 </head>
 
 <body>
 
 <header>
-
     <h1>🍽️ AI Bistro</h1>
 
     <div class="table-name">
-
-        🪑 Masa №
-        <span id="tableNumber">1</span>
-
+        🪑 Masa №<span id="tableNumber">1</span>
     </div>
-
 </header>
 
 
 <div class="container">
 
-
-<!-- =========================
-     MENU
-========================= -->
+<!-- MENU -->
 
 <div class="section">
 
     <h2>🍔 Menyu</h2>
 
     <div id="menuList">
-
         <div class="loading">
             Menyu yüklənir...
         </div>
-
     </div>
 
 
-    <!-- =========================
-         DYNAMIC AI
-    ========================= -->
+    <!-- AI RECOMMENDATION -->
 
     <div
         id="aiRecommendation"
@@ -297,7 +320,6 @@ button {
             class="ai-text"
         ></div>
 
-
         <div class="combo-price">
 
             <span
@@ -312,12 +334,10 @@ button {
 
         </div>
 
-
         <div
             id="aiSaveText"
             class="save-text"
         ></div>
-
 
         <button
             id="aiButton"
@@ -332,9 +352,7 @@ button {
 </div>
 
 
-<!-- =========================
-     CART
-========================= -->
+<!-- CART -->
 
 <div class="section">
 
@@ -356,9 +374,7 @@ button {
 
         <div class="cart-total">
 
-            <span>
-                Cəmi:
-            </span>
+            <span>Cəmi:</span>
 
             <span id="cartTotal">
                 0.00 AZN
@@ -381,12 +397,10 @@ button {
 
 <div id="message"></div>
 
-
 </div>
 
 
 <script>
-
 
 /* ==================================================
    SUPABASE
@@ -397,7 +411,7 @@ const SUPABASE_URL =
 
 
 /*
-   ÖZ PUBLISHABLE KEY-İNİ BURA YAZ.
+   ÖZ PUBLISHABLE KEY-İNİ BURAYA YAZ.
    SECRET KEY YAZMA.
 */
 
@@ -413,7 +427,7 @@ const supabaseClient =
 
 
 /* ==================================================
-   TABLE NUMBER
+   TABLE
 ================================================== */
 
 const params =
@@ -421,10 +435,8 @@ const params =
         window.location.search
     );
 
-
 const tableNumber =
     params.get("table") || "1";
-
 
 document.getElementById(
     "tableNumber"
@@ -446,19 +458,33 @@ let currentAIRule = null;
 let aiUsed = false;
 
 
+/*
+   Burada silinmiş AI qaydalarını saxlayırıq.
+
+   Məsələn:
+   Cheese Burger → Fries təklifi göstərildi
+   müştəri X basdı.
+
+   Daha həmin səbət vəziyyətində
+   eyni təklif dərhal geri çıxmayacaq.
+*/
+
+let dismissedAIRules = new Set();
+
+
 /* ==================================================
-   ESCAPE
+   ESCAPE HTML
 ================================================== */
 
 function escapeHtml(text) {
 
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    const div =
+        document.createElement("div");
 
+    div.textContent =
+        text;
+
+    return div.innerHTML;
 }
 
 
@@ -474,7 +500,10 @@ async function loadMenu() {
         );
 
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("menu")
             .select("*")
@@ -484,7 +513,10 @@ async function loadMenu() {
 
     if (error) {
 
-        console.error(error);
+        console.error(
+            "Menu error:",
+            error
+        );
 
         menuList.innerHTML = `
             <div class="error">
@@ -496,22 +528,15 @@ async function loadMenu() {
     }
 
 
-    menu = data || [];
+    menu =
+        data || [];
 
 
     renderMenu();
 
-
-    /*
-       Menyu gəldikdən sonra
-       AI qaydalarını da yükləyirik.
-    */
-
     await loadAIRules();
 
-
     updateAIRecommendation();
-
 }
 
 
@@ -542,48 +567,47 @@ function renderMenu() {
     menuList.innerHTML = "";
 
 
-    menu.forEach(product => {
+    menu.forEach(
+        product => {
 
-        const item =
-            document.createElement(
-                "div"
-            );
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+            item.className =
+                "menu-item";
 
 
-        item.className =
-            "menu-item";
+            item.innerHTML = `
 
+                <div class="product-info">
 
-        item.innerHTML = `
+                    <div class="product-name">
+                        ${escapeHtml(product.name)}
+                    </div>
 
-            <div class="product-info">
+                    <div class="product-price">
+                        ${Number(product.price).toFixed(2)}
+                        AZN
+                    </div>
 
-                <div class="product-name">
-                    ${escapeHtml(product.name)}
                 </div>
 
-                <div class="product-price">
-                    ${Number(product.price).toFixed(2)}
-                    AZN
-                </div>
+                <button
+                    class="add-button"
+                    onclick="addToCart(${product.id})"
+                >
+                    ➕ Əlavə et
+                </button>
 
-            </div>
-
-
-            <button
-                class="add-button"
-                onclick="addToCart(${product.id})"
-            >
-                ➕ Əlavə et
-            </button>
-
-        `;
+            `;
 
 
-        menuList.appendChild(item);
+            menuList.appendChild(item);
 
-    });
-
+        }
+    );
 }
 
 
@@ -593,7 +617,10 @@ function renderMenu() {
 
 async function loadAIRules() {
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("ai_recommendations")
             .select("*")
@@ -604,7 +631,7 @@ async function loadAIRules() {
     if (error) {
 
         console.error(
-            "AI qaydaları yüklənmədi:",
+            "AI rules error:",
             error
         );
 
@@ -614,13 +641,13 @@ async function loadAIRules() {
     }
 
 
-    aiRules = data || [];
-
+    aiRules =
+        data || [];
 }
 
 
 /* ==================================================
-   ADD TO CART
+   ADD NORMAL PRODUCT
 ================================================== */
 
 function addToCart(productId) {
@@ -643,13 +670,24 @@ function addToCart(productId) {
     }
 
 
+    /*
+       Müştəri həmin məhsulu yenidən
+       əlavə edirsə, onun AI qaydasını
+       yenidən aktiv edə bilərik.
+    */
+
+    dismissedAIRules.clear();
+
+
     cart.push({
 
         id: product.id,
 
         name: product.name,
 
-        price: Number(product.price),
+        price: Number(
+            product.price
+        ),
 
         aiItem: false
 
@@ -658,9 +696,7 @@ function addToCart(productId) {
 
     renderCart();
 
-
     updateAIRecommendation();
-
 }
 
 
@@ -670,16 +706,33 @@ function addToCart(productId) {
 
 function removeFromCart(index) {
 
+    if (
+        index < 0 ||
+        index >= cart.length
+    ) {
+        return;
+    }
+
+
     const removed =
         cart[index];
 
 
+    /*
+       Əgər AI məhsuludursa,
+       onun qaydasını yadda saxlayırıq.
+    */
+
     if (
-        removed &&
-        removed.aiItem
+        removed.aiItem &&
+        removed.aiRuleId
     ) {
 
-        aiUsed = false;
+        dismissedAIRules.add(
+            Number(
+                removed.aiRuleId
+            )
+        );
 
     }
 
@@ -690,103 +743,127 @@ function removeFromCart(index) {
     );
 
 
+    /*
+       Əgər AI məhsulu silindisə,
+       aiUsed sifariş göndərilənə qədər
+       true qala bilər.
+
+       Çünki müştəri AI təklifini qəbul edib
+       sonra fikrini dəyişib silə bilər.
+    */
+
+
     renderCart();
 
-
     updateAIRecommendation();
-
 }
 
 
 /* ==================================================
-   FIND CURRENT AI RULE
+   FIND AI RULE
 ================================================== */
 
 function findAIRule() {
 
     /*
-       Səbətdə olan məhsullara baxırıq.
-       Hansı məhsul üçün Admin panelində
-       AI qaydası yaradılıbsa onu tapırıq.
+       Səbətdəki hər məhsulu yoxlayırıq.
     */
 
     for (
         const cartItem of cart
     ) {
 
+        /*
+           AI məhsulunun özü trigger
+           kimi işləməsin.
+        */
+
+        if (cartItem.aiItem) {
+            continue;
+        }
+
+
         const rule =
             aiRules.find(
                 r =>
+
                     Number(
                         r.trigger_product_id
                     )
-                    === Number(
+                    ===
+                    Number(
                         cartItem.id
+                    )
+
+                    &&
+
+                    !dismissedAIRules.has(
+                        Number(r.id)
                     )
             );
 
 
-        if (rule) {
-
-            const recommended =
-                menu.find(
-                    p =>
-                        Number(p.id)
-                        === Number(
-                            rule.recommended_product_id
-                        )
-                );
-
-
-            if (!recommended)
-                continue;
-
-
-            /*
-               Əgər tövsiyə olunan məhsul
-               artıq səbətdədirsə,
-               yenidən göstərmirik.
-            */
-
-            const alreadyInCart =
-                cart.some(
-                    item =>
-                        Number(item.id)
-                        === Number(
-                            recommended.id
-                        )
-                );
-
-
-            if (
-                !alreadyInCart &&
-                !cart.some(
-                    item =>
-                        item.aiRuleId
-                        === rule.id
-                )
-            ) {
-
-                return {
-                    rule: rule,
-                    trigger: cartItem,
-                    recommended: recommended
-                };
-
-            }
-
+        if (!rule) {
+            continue;
         }
 
+
+        const recommended =
+            menu.find(
+                p =>
+                    Number(p.id)
+                    ===
+                    Number(
+                        rule.recommended_product_id
+                    )
+            );
+
+
+        if (!recommended) {
+            continue;
+        }
+
+
+        /*
+           Tövsiyə olunan məhsul artıq
+           səbətdədirsə göstərmirik.
+        */
+
+        const alreadyInCart =
+            cart.some(
+                item =>
+
+                    Number(item.id)
+                    ===
+                    Number(
+                        recommended.id
+                    )
+            );
+
+
+        if (alreadyInCart) {
+            continue;
+        }
+
+
+        return {
+
+            rule: rule,
+
+            trigger: cartItem,
+
+            recommended: recommended
+
+        };
     }
 
 
     return null;
-
 }
 
 
 /* ==================================================
-   UPDATE AI RECOMMENDATION
+   UPDATE AI
 ================================================== */
 
 function updateAIRecommendation() {
@@ -803,7 +880,8 @@ function updateAIRecommendation() {
 
     if (!result) {
 
-        currentAIRule = null;
+        currentAIRule =
+            null;
 
         aiBox.style.display =
             "none";
@@ -819,29 +897,21 @@ function updateAIRecommendation() {
     const trigger =
         result.trigger;
 
-
     const recommended =
         result.recommended;
-
 
     const rule =
         result.rule;
 
 
     const normalPrice =
-        Number(
-            trigger.price
-        )
+        Number(trigger.price)
         +
-        Number(
-            recommended.price
-        );
+        Number(recommended.price);
 
 
     const comboPrice =
-        Number(
-            rule.combo_price
-        );
+        Number(rule.combo_price);
 
 
     const saving =
@@ -849,35 +919,59 @@ function updateAIRecommendation() {
         comboPrice;
 
 
+    /*
+       AI yazısı
+    */
+
     document.getElementById(
         "aiText"
     ).innerHTML = `
 
-        ${escapeHtml(trigger.name)}
+        ${escapeHtml(
+            trigger.name
+        )}
         seçdiniz.
 
         Yanında
         <b>
-            ${escapeHtml(recommended.name)}
+            ${escapeHtml(
+                recommended.name
+            )}
         </b>
         daha sərfəli ola bilər!
 
     `;
 
 
+    /*
+       Normal qiymət
+    */
+
     document.getElementById(
         "aiOldPrice"
     ).textContent =
-        normalPrice.toFixed(2)
-        + " AZN";
 
+        normalPrice.toFixed(2)
+        +
+        " AZN";
+
+
+    /*
+       AI qiyməti
+    */
 
     document.getElementById(
         "aiNewPrice"
     ).textContent =
-        comboPrice.toFixed(2)
-        + " AZN";
 
+        comboPrice.toFixed(2)
+        +
+        " AZN";
+
+
+    /*
+       Qənaət
+    */
 
     if (saving > 0) {
 
@@ -897,9 +991,12 @@ function updateAIRecommendation() {
             "aiSaveText"
         ).textContent =
             "🤖 AI xüsusi təklifi";
-
     }
 
+
+    /*
+       Button
+    */
 
     document.getElementById(
         "aiButton"
@@ -907,9 +1004,7 @@ function updateAIRecommendation() {
 
         "🤖 "
         +
-        escapeHtml(
-            recommended.name
-        )
+        recommended.name
         +
         " əlavə et — "
         +
@@ -920,53 +1015,59 @@ function updateAIRecommendation() {
 
     aiBox.style.display =
         "block";
-
 }
 
 
 /* ==================================================
-   ADD AI RECOMMENDATION TO CART
+   ADD AI PRODUCT
 ================================================== */
 
 function addAIRecommendationToCart() {
 
     if (!currentAIRule) {
-
         return;
     }
-
-
-    const recommended =
-        currentAIRule.recommended;
 
 
     const rule =
         currentAIRule.rule;
 
 
+    const recommended =
+        currentAIRule.recommended;
+
+
     /*
-       Eyni AI təklifinin
-       ikinci dəfə əlavə edilməsinin
-       qarşısını alırıq.
+       Artıq səbətdədirsə
+       əlavə etmə.
     */
 
     const alreadyAdded =
         cart.some(
             item =>
                 item.aiRuleId
-                === rule.id
+                ===
+                rule.id
         );
 
 
     if (alreadyAdded) {
 
         alert(
-            "Bu AI təklifi artıq əlavə edilib."
+            "Bu AI təklifi artıq səbətdədir."
         );
 
         return;
     }
 
+
+    /*
+       AI təklifi səbətə əlavə olunur.
+       
+       Burada combo_price istifadə olunur.
+       Yəni Admin paneldə nə qiymət yazılıbsa,
+       müştəri həmin qiyməti görür.
+    */
 
     cart.push({
 
@@ -990,7 +1091,9 @@ function addAIRecommendationToCart() {
             true,
 
         aiRuleId:
-            rule.id,
+            Number(
+                rule.id
+            ),
 
         originalProductId:
             recommended.id
@@ -998,11 +1101,31 @@ function addAIRecommendationToCart() {
     });
 
 
-    aiUsed = true;
+    /*
+       AI qəbul edildi.
+    */
+
+    aiUsed =
+        true;
+
+
+    /*
+       Eyni AI qaydasını
+       yenidən göstərməsin.
+    */
+
+    dismissedAIRules.add(
+        Number(
+            rule.id
+        )
+    );
+
+
+    currentAIRule =
+        null;
 
 
     renderCart();
-
 
     updateAIRecommendation();
 
@@ -1010,7 +1133,6 @@ function addAIRecommendationToCart() {
     alert(
         "AI təklifi səbətə əlavə edildi! 🤖"
     );
-
 }
 
 
@@ -1085,46 +1207,76 @@ function renderCart() {
 
             div.innerHTML = `
 
-                <span>
+                <div class="cart-item-left">
+
+                    <div class="cart-item-name">
+
+                        ${
+                            item.aiItem
+                            ? "🤖 "
+                            : ""
+                        }
+
+                        ${escapeHtml(
+                            item.name
+                        )}
+
+                    </div>
+
 
                     ${
                         item.aiItem
-                        ? "🤖 "
-                        : ""
+                        ?
+
+                        `
+                        <div class="cart-item-ai">
+                            AI təklifi
+                        </div>
+                        `
+
+                        :
+
+                        ""
                     }
 
-                    ${escapeHtml(item.name)}
-
-                </span>
+                </div>
 
 
-                <span>
+                <div class="cart-item-right">
 
-                    ${Number(
-                        item.price
-                    ).toFixed(2)}
-                    AZN
+                    <span class="cart-item-price">
+
+                        ${Number(
+                            item.price
+                        ).toFixed(2)}
+
+                        AZN
+
+                    </span>
 
 
                     <button
                         class="remove-button"
                         onclick="removeFromCart(${index})"
                     >
-                        ✕
+                        🗑️ Sil
                     </button>
 
-                </span>
+                </div>
 
             `;
 
 
-            cartList.appendChild(div);
+            cartList.appendChild(
+                div
+            );
 
         }
     );
 
 
     totalElement.textContent =
+
         total.toFixed(2)
         +
         " AZN";
@@ -1132,28 +1284,31 @@ function renderCart() {
 
     totalArea.style.display =
         "block";
-
 }
 
 
 /* ==================================================
-   CALCULATE TOTAL
+   TOTAL
 ================================================== */
 
 function calculateTotal() {
 
     return cart.reduce(
+
         (
             sum,
             item
         ) =>
-            sum +
+
+            sum
+            +
             Number(
                 item.price
             ),
-        0
-    );
 
+        0
+
+    );
 }
 
 
@@ -1179,7 +1334,6 @@ function showMessage(
         </div>
 
     `;
-
 }
 
 
@@ -1279,6 +1433,7 @@ async function placeOrder() {
         if (error) {
 
             console.error(
+                "Supabase error:",
                 error
             );
 
@@ -1303,19 +1458,20 @@ async function placeOrder() {
         );
 
 
+        /*
+           Sifarişdən sonra səbəti təmizləyirik.
+        */
+
         cart = [];
 
+        aiUsed = false;
 
-        aiUsed =
-            false;
+        currentAIRule = null;
 
-
-        currentAIRule =
-            null;
+        dismissedAIRules.clear();
 
 
         renderCart();
-
 
         updateAIRecommendation();
 
@@ -1346,7 +1502,6 @@ async function placeOrder() {
 
     button.textContent =
         "📤 Sifarişi göndər";
-
 }
 
 
@@ -1355,7 +1510,9 @@ async function placeOrder() {
 ================================================== */
 
 supabaseClient
-    .channel("customer-menu")
+    .channel(
+        "customer-menu"
+    )
     .on(
         "postgres_changes",
         {
@@ -1377,7 +1534,9 @@ supabaseClient
 ================================================== */
 
 supabaseClient
-    .channel("customer-ai-rules")
+    .channel(
+        "customer-ai-rules"
+    )
     .on(
         "postgres_changes",
         {
@@ -1387,7 +1546,7 @@ supabaseClient
         },
         () => {
 
-            loadMenu();
+            loadAIRules();
 
         }
     )
