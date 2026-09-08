@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>AI Bistro - Admin Panel</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 <style>
@@ -34,6 +30,7 @@ header {
 
 header h1 {
     margin: 0;
+    font-size: 24px;
 }
 
 .container {
@@ -77,6 +74,59 @@ header h1 {
     margin-top: 8px;
 }
 
+.ai-engine {
+    background: linear-gradient(135deg,#fff7ed,#ffedd5);
+    border: 2px solid #fb923c;
+    padding: 22px;
+    border-radius: 18px;
+    margin-bottom: 25px;
+}
+
+.ai-engine h2 {
+    margin-top: 0;
+}
+
+.ai-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit,minmax(180px,1fr));
+    gap: 12px;
+}
+
+.ai-card {
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.ai-card-title {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.ai-card-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 7px;
+}
+
+.ai-action {
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 15px;
+    border-left: 5px solid #f97316;
+}
+
+.ai-action-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.ai-result {
+    line-height: 1.6;
+}
+
 section {
     background: white;
     padding: 20px;
@@ -92,6 +142,7 @@ input {
     padding: 11px;
     border: 1px solid #d1d5db;
     border-radius: 8px;
+    margin-right: 5px;
 }
 
 button {
@@ -169,7 +220,7 @@ button {
 .qr-grid {
     display: grid;
     grid-template-columns:
-        repeat(auto-fill, minmax(180px, 1fr));
+        repeat(auto-fill,minmax(180px,1fr));
     gap: 15px;
 }
 
@@ -197,8 +248,25 @@ button {
     color: #6b7280;
 }
 
-</style>
+.empty {
+    color: #6b7280;
+    padding: 15px 0;
+}
 
+@media(max-width:600px) {
+
+    input {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    .product-row {
+        align-items: flex-start;
+    }
+
+}
+
+</style>
 </head>
 
 <body>
@@ -222,71 +290,163 @@ button {
         <div class="stat-title">
             Sifariş sayı
         </div>
-
-        <div id="orderCount"
-             class="stat-value">
+        <div id="orderCount" class="stat-value">
             0
         </div>
     </div>
-
 
     <div class="stat">
         <div class="stat-title">
             Ümumi satış
         </div>
-
-        <div id="sales"
-             class="stat-value">
+        <div id="sales" class="stat-value">
             0.00 AZN
         </div>
     </div>
-
-
-    <div class="stat">
-        <div class="stat-title">
-            AI əlavə satış
-        </div>
-
-        <div id="aiRevenue"
-             class="stat-value">
-            0.00 AZN
-        </div>
-    </div>
-
 
     <div class="stat">
         <div class="stat-title">
             AI sifarişlər
         </div>
-
-        <div id="aiOrders"
-             class="stat-value">
+        <div id="aiOrders" class="stat-value">
             0
         </div>
     </div>
-
 
     <div class="stat">
         <div class="stat-title">
             AI istifadə faizi
         </div>
-
-        <div id="aiRate"
-             class="stat-value">
+        <div id="aiRate" class="stat-value">
             0%
         </div>
     </div>
 
+</div>
 
-    <div class="stat">
-        <div class="stat-title">
-            Orta AI gəliri
+
+<!-- AI REVENUE ENGINE -->
+
+<div class="ai-engine">
+
+    <h2>
+        🤖 AI Revenue Engine
+    </h2>
+
+    <div class="ai-grid">
+
+        <div class="ai-card">
+
+            <div class="ai-card-title">
+                💰 AI əlavə gəlir
+            </div>
+
+            <div
+                id="aiRevenue"
+                class="ai-card-value">
+
+                0.00 AZN
+
+            </div>
+
         </div>
 
-        <div id="avgAiRevenue"
-             class="stat-value">
-            0.00 AZN
+
+        <div class="ai-card">
+
+            <div class="ai-card-title">
+                🍟 Combo satış sayı
+            </div>
+
+            <div
+                id="comboCount"
+                class="ai-card-value">
+
+                0
+
+            </div>
+
         </div>
+
+
+        <div class="ai-card">
+
+            <div class="ai-card-title">
+                💵 Combo gəliri
+            </div>
+
+            <div
+                id="comboRevenue"
+                class="ai-card-value">
+
+                0.00 AZN
+
+            </div>
+
+        </div>
+
+
+        <div class="ai-card">
+
+            <div class="ai-card-title">
+                🧾 Orta AI sifarişi
+            </div>
+
+            <div
+                id="avgAiOrder"
+                class="ai-card-value">
+
+                0.00 AZN
+
+            </div>
+
+        </div>
+
+
+        <div class="ai-card">
+
+            <div class="ai-card-title">
+                🎯 AI qəbul faizi
+            </div>
+
+            <div
+                id="aiAcceptRate"
+                class="ai-card-value">
+
+                0%
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="ai-action">
+
+        <div class="ai-action-title">
+            🎯 Aktiv AI Action
+        </div>
+
+        <div class="ai-result">
+
+            🍔 <b>Chicken Burger → Combo təklifi</b>
+
+            <br><br>
+
+            AI burger alan müştəriyə
+            Fries + Cola Combo təklif edir.
+
+            <br><br>
+
+            <b>Nəticə:</b>
+
+            <span id="aiActionResult">
+                Hələ kifayət qədər məlumat yoxdur.
+            </span>
+
+        </div>
+
     </div>
 
 </div>
@@ -371,7 +531,7 @@ sifariş səhifəsinə keçəcək.
 </section>
 
 
-<!-- SIFARISLER -->
+<!-- ORDERS -->
 
 <section>
 
@@ -388,17 +548,22 @@ sifariş səhifəsinə keçəcək.
 
 <script>
 
+
+/* SUPABASE */
+
 const SUPABASE_URL =
     "https://lwxnxcebzhbpjmrboosf.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_i2_aVgOrcZNYuwzlUGtK-w_kRhPDgmQ";
 
+
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
+
 
 let orders = [];
 let menu = [];
@@ -417,13 +582,17 @@ async function checkConnection() {
     const box =
         document.getElementById("connection");
 
+
     if (error) {
 
         box.textContent =
             "🔴 Supabase bağlantısında problem var.";
 
-        box.style.background = "#fee2e2";
-        box.style.color = "#991b1b";
+        box.style.background =
+            "#fee2e2";
+
+        box.style.color =
+            "#991b1b";
 
     } else {
 
@@ -431,6 +600,7 @@ async function checkConnection() {
             "🟢 Supabase bağlantısı aktivdir.";
 
     }
+
 }
 
 
@@ -442,22 +612,30 @@ async function loadOrders() {
         await supabaseClient
             .from("orders")
             .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
     if (error) {
 
         console.error(error);
 
         return;
+
     }
 
+
     orders = data || [];
+
 
     renderOrders();
 
     updateStats();
+
 }
 
 
@@ -468,64 +646,231 @@ function updateStats() {
     const totalOrders =
         orders.length;
 
+
     const sales =
         orders.reduce(
             (sum, order) =>
-                sum + Number(order.total || 0),
+                sum +
+                Number(order.total || 0),
             0
         );
 
+
     const aiOrders =
         orders.filter(
-            order => order.ai_used === true
-        ).length;
+            order =>
+                order.ai_used === true
+        );
 
-    const aiRevenue =
-        orders
-            .filter(order => order.ai_used === true)
-            .reduce(
-                (sum, order) =>
-                    sum + Number(order.total || 0),
-                0
-            );
+
+    const aiCount =
+        aiOrders.length;
+
 
     const aiRate =
         totalOrders
-            ? (aiOrders / totalOrders) * 100
-            : 0;
-
-    const avgAi =
-        aiOrders
-            ? aiRevenue / aiOrders
+            ? (aiCount / totalOrders) * 100
             : 0;
 
 
-    document.getElementById("orderCount")
-        .textContent = totalOrders;
+    /*
+       AI COMBO ANALIZI
+
+       Combo qiyməti:
+       4.50 AZN
+    */
 
 
-    document.getElementById("sales")
-        .textContent =
-        sales.toFixed(2) + " AZN";
+    let comboCount = 0;
 
 
-    document.getElementById("aiRevenue")
-        .textContent =
-        aiRevenue.toFixed(2) + " AZN";
+    orders.forEach(order => {
+
+        const items =
+            Array.isArray(order.items)
+                ? order.items
+                : [];
 
 
-    document.getElementById("aiOrders")
-        .textContent = aiOrders;
+        items.forEach(item => {
+
+            const name =
+                String(
+                    item.name || ""
+                ).toLowerCase();
 
 
-    document.getElementById("aiRate")
-        .textContent =
-        aiRate.toFixed(0) + "%";
+            if (
+                name.includes("combo")
+            ) {
+
+                comboCount++;
+
+            }
+
+        });
+
+    });
 
 
-    document.getElementById("avgAiRevenue")
-        .textContent =
-        avgAi.toFixed(2) + " AZN";
+    const comboRevenue =
+        comboCount * 4.50;
+
+
+    const aiRevenue =
+        comboRevenue;
+
+
+    const avgAiOrder =
+        aiCount
+            ? aiOrders.reduce(
+                (sum, order) =>
+                    sum +
+                    Number(
+                        order.total || 0
+                    ),
+                0
+            ) / aiCount
+            : 0;
+
+
+    /*
+       AI ACCEPT RATE
+
+       AI təklifi üçün
+       burger sifarişlərini
+       əsas götürürük.
+    */
+
+
+    let burgerOrders = 0;
+
+
+    orders.forEach(order => {
+
+        const items =
+            Array.isArray(order.items)
+                ? order.items
+                : [];
+
+
+        const hasBurger =
+            items.some(item => {
+
+                const name =
+                    String(
+                        item.name || ""
+                    ).toLowerCase();
+
+                return (
+                    name.includes("burger")
+                );
+
+            });
+
+
+        if (hasBurger) {
+
+            burgerOrders++;
+
+        }
+
+    });
+
+
+    const aiAcceptRate =
+        burgerOrders
+            ? (comboCount / burgerOrders) * 100
+            : 0;
+
+
+    /* SCREEN */
+
+    document.getElementById(
+        "orderCount"
+    ).textContent =
+        totalOrders;
+
+
+    document.getElementById(
+        "sales"
+    ).textContent =
+        sales.toFixed(2) +
+        " AZN";
+
+
+    document.getElementById(
+        "aiOrders"
+    ).textContent =
+        aiCount;
+
+
+    document.getElementById(
+        "aiRate"
+    ).textContent =
+        aiRate.toFixed(0) +
+        "%";
+
+
+    document.getElementById(
+        "aiRevenue"
+    ).textContent =
+        aiRevenue.toFixed(2) +
+        " AZN";
+
+
+    document.getElementById(
+        "comboCount"
+    ).textContent =
+        comboCount;
+
+
+    document.getElementById(
+        "comboRevenue"
+    ).textContent =
+        comboRevenue.toFixed(2) +
+        " AZN";
+
+
+    document.getElementById(
+        "avgAiOrder"
+    ).textContent =
+        avgAiOrder.toFixed(2) +
+        " AZN";
+
+
+    document.getElementById(
+        "aiAcceptRate"
+    ).textContent =
+        Math.min(
+            aiAcceptRate,
+            100
+        ).toFixed(0) +
+        "%";
+
+
+    /* AI ACTION */
+
+    const result =
+        document.getElementById(
+            "aiActionResult"
+        );
+
+
+    if (comboCount > 0) {
+
+        result.innerHTML =
+            ` ${comboCount} AI qəbul →
+             <b>${comboRevenue.toFixed(2)}
+             AZN əlavə gəlir.</b>`;
+
+    } else {
+
+        result.textContent =
+            " Hələ AI Combo satışı yoxdur.";
+
+    }
+
 }
 
 
@@ -534,7 +879,10 @@ function updateStats() {
 function renderOrders() {
 
     const box =
-        document.getElementById("orders");
+        document.getElementById(
+            "orders"
+        );
+
 
     if (!orders.length) {
 
@@ -542,7 +890,9 @@ function renderOrders() {
             "<p>Sifariş yoxdur.</p>";
 
         return;
+
     }
+
 
     box.innerHTML =
         orders.map(order => {
@@ -552,11 +902,17 @@ function renderOrders() {
                     ? order.items
                     : [];
 
+
             const itemsHtml =
                 items.map(item =>
-                    `${escapeHtml(item.name)}
-                    — ${Number(item.price).toFixed(2)} AZN`
+                    `${escapeHtml(
+                        item.name
+                    )}
+                    — ${Number(
+                        item.price
+                    ).toFixed(2)} AZN`
                 ).join("<br>");
+
 
             return `
 
@@ -565,60 +921,91 @@ function renderOrders() {
                     <div class="order-header">
 
                         <div>
-                            <b>🪑 Masa ${order.table_number}</b>
+                            <b>
+                                🪑 Masa
+                                ${order.table_number}
+                            </b>
                         </div>
 
                         <div>
                             <b>
-                            ${Number(order.total).toFixed(2)}
-                            AZN
+                                ${Number(
+                                    order.total
+                                ).toFixed(2)}
+                                AZN
                             </b>
                         </div>
 
                     </div>
 
+
                     <div class="order-items">
+
                         ${itemsHtml}
+
                     </div>
+
 
                     <br>
 
+
                     ${
                         order.ai_used
-                        ? `<span class="ai">
-                            🤖 AI istifadə edildi
-                           </span>`
+                        ? `
+                            <span class="ai">
+                                🤖 AI istifadə edildi
+                            </span>
+                          `
                         : ""
                     }
 
+
                     <br><br>
+
 
                     <b>Status:</b>
-                    ${escapeHtml(order.status || "Yeni sifariş")}
+
+                    ${escapeHtml(
+                        order.status ||
+                        "Yeni sifariş"
+                    )}
+
 
                     <br><br>
+
 
                     <div class="actions">
 
                         <button
                             class="orange"
-                            onclick="changeStatus(${order.id}, 'Hazırlanır')">
+                            onclick="changeStatus(
+                                ${order.id},
+                                'Hazırlanır'
+                            )">
 
                             Hazırlanır
 
                         </button>
 
+
                         <button
                             class="green"
-                            onclick="changeStatus(${order.id}, 'Hazırdır')">
+                            onclick="changeStatus(
+                                ${order.id},
+                                'Hazırdır'
+                            )">
 
                             Hazırdır
 
                         </button>
 
+
                         <button
                             class="primary"
-                            onclick="changeStatus(${order.id}, 'Təqdim edildi')">
+                            onclick="changeStatus(
+                                ${order.id},
+                                'Təqdim edildi'
+                            )">
 
                             Təqdim edildi
 
@@ -631,12 +1018,16 @@ function renderOrders() {
             `;
 
         }).join("");
+
 }
 
 
 /* STATUS */
 
-async function changeStatus(id, status) {
+async function changeStatus(
+    id,
+    status
+) {
 
     const { error } =
         await supabaseClient
@@ -644,7 +1035,11 @@ async function changeStatus(id, status) {
             .update({
                 status: status
             })
-            .eq("id", id);
+            .eq(
+                "id",
+                id
+            );
+
 
     if (error) {
 
@@ -654,9 +1049,12 @@ async function changeStatus(id, status) {
         );
 
         return;
+
     }
 
+
     loadOrders();
+
 }
 
 
@@ -670,16 +1068,22 @@ async function loadMenu() {
             .select("*")
             .order("id");
 
+
     if (error) {
 
         console.error(error);
 
         return;
+
     }
 
-    menu = data || [];
+
+    menu =
+        data || [];
+
 
     renderMenu();
+
 }
 
 
@@ -688,7 +1092,10 @@ async function loadMenu() {
 function renderMenu() {
 
     const box =
-        document.getElementById("menuList");
+        document.getElementById(
+            "menuList"
+        );
+
 
     if (!menu.length) {
 
@@ -696,7 +1103,9 @@ function renderMenu() {
             "<p>Menyu boşdur.</p>";
 
         return;
+
     }
+
 
     box.innerHTML =
         menu.map(product => `
@@ -706,24 +1115,33 @@ function renderMenu() {
                 <div>
 
                     <b>
-                        ${escapeHtml(product.name)}
+                        ${escapeHtml(
+                            product.name
+                        )}
                     </b>
 
                     <br>
 
                     <span class="small">
-                        ${Number(product.price).toFixed(2)}
+
+                        ${Number(
+                            product.price
+                        ).toFixed(2)}
+
                         AZN
+
                     </span>
 
                     <br>
 
                     <span class="small">
+
                         ${
                             product.active
                             ? "🟢 Aktiv"
                             : "🔴 Deaktiv"
                         }
+
                     </span>
 
                 </div>
@@ -733,7 +1151,9 @@ function renderMenu() {
 
                     <button
                         class="gray"
-                        onclick="editProduct(${product.id})">
+                        onclick="editProduct(
+                            ${product.id}
+                        )">
 
                         Qiymət
 
@@ -762,7 +1182,9 @@ function renderMenu() {
 
                     <button
                         class="red"
-                        onclick="deleteProduct(${product.id})">
+                        onclick="deleteProduct(
+                            ${product.id}
+                        )">
 
                         Sil
 
@@ -773,6 +1195,7 @@ function renderMenu() {
             </div>
 
         `).join("");
+
 }
 
 
@@ -781,14 +1204,18 @@ function renderMenu() {
 async function addProduct() {
 
     const name =
-        document.getElementById("productName")
-            .value.trim();
+        document.getElementById(
+            "productName"
+        ).value.trim();
+
 
     const price =
         Number(
-            document.getElementById("productPrice")
-                .value
+            document.getElementById(
+                "productPrice"
+            ).value
         );
+
 
     if (!name || !price) {
 
@@ -797,10 +1224,13 @@ async function addProduct() {
         );
 
         return;
+
     }
+
 
     const id =
         Date.now();
+
 
     const { error } =
         await supabaseClient
@@ -812,6 +1242,7 @@ async function addProduct() {
                 active: true
             });
 
+
     if (error) {
 
         alert(
@@ -820,15 +1251,22 @@ async function addProduct() {
         );
 
         return;
+
     }
 
-    document.getElementById("productName")
-        .value = "";
 
-    document.getElementById("productPrice")
-        .value = "";
+    document.getElementById(
+        "productName"
+    ).value = "";
+
+
+    document.getElementById(
+        "productPrice"
+    ).value = "";
+
 
     loadMenu();
+
 }
 
 
@@ -837,9 +1275,14 @@ async function addProduct() {
 async function editProduct(id) {
 
     const product =
-        menu.find(item => item.id === id);
+        menu.find(
+            item =>
+                item.id === id
+        );
+
 
     if (!product) return;
+
 
     const newPrice =
         prompt(
@@ -847,17 +1290,26 @@ async function editProduct(id) {
             product.price
         );
 
-    if (newPrice === null) return;
+
+    if (
+        newPrice === null
+    ) return;
+
 
     const price =
         Number(newPrice);
 
+
     if (isNaN(price)) {
 
-        alert("Düzgün qiymət yaz.");
+        alert(
+            "Düzgün qiymət yaz."
+        );
 
         return;
+
     }
+
 
     const { error } =
         await supabaseClient
@@ -865,22 +1317,32 @@ async function editProduct(id) {
             .update({
                 price: price
             })
-            .eq("id", id);
+            .eq(
+                "id",
+                id
+            );
+
 
     if (error) {
 
         alert(error.message);
 
         return;
+
     }
 
+
     loadMenu();
+
 }
 
 
-/* AKTIV / DEAKTIV */
+/* TOGGLE */
 
-async function toggleProduct(id, active) {
+async function toggleProduct(
+    id,
+    active
+) {
 
     const { error } =
         await supabaseClient
@@ -888,16 +1350,23 @@ async function toggleProduct(id, active) {
             .update({
                 active: !active
             })
-            .eq("id", id);
+            .eq(
+                "id",
+                id
+            );
+
 
     if (error) {
 
         alert(error.message);
 
         return;
+
     }
 
+
     loadMenu();
+
 }
 
 
@@ -911,20 +1380,28 @@ async function deleteProduct(id) {
         )
     ) return;
 
+
     const { error } =
         await supabaseClient
             .from("menu")
             .delete()
-            .eq("id", id);
+            .eq(
+                "id",
+                id
+            );
+
 
     if (error) {
 
         alert(error.message);
 
         return;
+
     }
 
+
     loadMenu();
+
 }
 
 
@@ -934,19 +1411,28 @@ function generateQRs() {
 
     const count =
         Number(
-            document.getElementById("tableCount")
-                .value
+            document.getElementById(
+                "tableCount"
+            ).value
         );
 
+
     const grid =
-        document.getElementById("qrGrid");
+        document.getElementById(
+            "qrGrid"
+        );
+
 
     grid.innerHTML = "";
+
 
     const baseUrl =
         window.location.origin +
         window.location.pathname
-            .replace("admin.html", "index.html");
+            .replace(
+                "admin.html",
+                "index.html"
+            );
 
 
     for (
@@ -960,11 +1446,16 @@ function generateQRs() {
             "?table=" +
             table;
 
+
         const card =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         card.className =
             "qr-card";
+
 
         card.innerHTML = `
 
@@ -996,6 +1487,7 @@ function generateQRs() {
 
         `;
 
+
         grid.appendChild(card);
 
 
@@ -1011,6 +1503,7 @@ function generateQRs() {
         );
 
     }
+
 }
 
 
@@ -1019,18 +1512,36 @@ function generateQRs() {
 function escapeHtml(text) {
 
     return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
 }
 
 
-/* REALTIME */
+/* REALTIME ORDERS */
 
 supabaseClient
-    .channel("admin-orders")
+    .channel(
+        "admin-orders"
+    )
     .on(
         "postgres_changes",
         {
@@ -1039,14 +1550,20 @@ supabaseClient
             table: "orders"
         },
         () => {
+
             loadOrders();
+
         }
     )
     .subscribe();
 
 
+/* REALTIME MENU */
+
 supabaseClient
-    .channel("admin-menu")
+    .channel(
+        "admin-menu"
+    )
     .on(
         "postgres_changes",
         {
@@ -1055,7 +1572,9 @@ supabaseClient
             table: "menu"
         },
         () => {
+
             loadMenu();
+
         }
     )
     .subscribe();
