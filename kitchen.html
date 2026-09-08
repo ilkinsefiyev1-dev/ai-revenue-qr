@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="az">
+
 <head>
 
 <meta charset="UTF-8">
@@ -7,7 +8,7 @@
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
-<title>AI Bistro — Mətbəx</title>
+<title>AI Bistro - Kitchen</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -19,13 +20,13 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
     background: #111827;
     color: white;
+    font-family: Arial, sans-serif;
 }
 
 header {
-    padding: 18px 25px;
+    padding: 20px;
     background: #020617;
     display: flex;
     justify-content: space-between;
@@ -34,15 +35,12 @@ header {
 
 header h1 {
     margin: 0;
-    font-size: 23px;
+    font-size: 25px;
 }
 
-.live {
-    background: #16a34a;
-    padding: 8px 12px;
-    border-radius: 8px;
+.connection {
     font-size: 13px;
-    font-weight: bold;
+    color: #86efac;
 }
 
 .container {
@@ -58,157 +56,100 @@ header h1 {
 
 .order {
     background: #1f2937;
-    border-radius: 15px;
+    border-radius: 16px;
     padding: 18px;
     border: 2px solid #374151;
 }
 
 .order.new {
-    border-color: #f59e0b;
-}
-
-.order.preparing {
-    border-color: #3b82f6;
+    border-color: #f97316;
 }
 
 .order.ready {
-    border-color: #16a34a;
-}
-
-.order-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+    border-color: #22c55e;
 }
 
 .table {
-    font-size: 21px;
+    font-size: 25px;
     font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .time {
-    font-size: 12px;
     color: #9ca3af;
-}
-
-.status {
-    display: inline-block;
-    padding: 6px 10px;
-    border-radius: 7px;
-    font-size: 12px;
-    font-weight: bold;
-    margin-bottom: 12px;
-}
-
-.status.new {
-    background: #f59e0b;
-    color: #111827;
-}
-
-.status.preparing {
-    background: #3b82f6;
-    color: white;
-}
-
-.status.ready {
-    background: #16a34a;
-    color: white;
+    font-size: 13px;
 }
 
 .items {
-    background: #111827;
-    border-radius: 10px;
-    padding: 13px;
-    margin-bottom: 15px;
-    line-height: 1.8;
-}
-
-.item {
-    border-bottom: 1px solid #374151;
-    padding: 5px 0;
-}
-
-.item:last-child {
-    border-bottom: none;
+    margin: 15px 0;
+    line-height: 1.7;
 }
 
 .total {
     font-size: 20px;
     font-weight: bold;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .ai {
-    background: #064e3b;
-    color: #a7f3d0;
-    padding: 7px 10px;
-    border-radius: 7px;
-    font-size: 12px;
-    margin-bottom: 12px;
     display: inline-block;
+    background: #f97316;
+    color: white;
+    padding: 6px 9px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 12px;
 }
 
-.buttons {
+.status {
+    display: inline-block;
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: #374151;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.actions {
     display: flex;
-    gap: 8px;
+    gap: 7px;
     flex-wrap: wrap;
 }
 
 button {
     border: none;
     border-radius: 9px;
-    padding: 11px 13px;
+    padding: 10px 12px;
     cursor: pointer;
     font-weight: bold;
 }
 
-.prepare {
-    background: #f59e0b;
-    color: #111827;
+.orange {
+    background: #f97316;
+    color: white;
 }
 
-.ready {
+.green {
     background: #16a34a;
     color: white;
 }
 
-.done {
-    background: #6b7280;
+.blue {
+    background: #2563eb;
+    color: white;
+}
+
+.gray {
+    background: #4b5563;
     color: white;
 }
 
 .empty {
     text-align: center;
     color: #9ca3af;
-    padding: 60px 20px;
+    padding: 70px 20px;
     font-size: 20px;
-}
-
-.error {
-    text-align: center;
-    color: #fca5a5;
-    padding: 40px;
-}
-
-@media(max-width:600px) {
-
-    header {
-        padding: 15px;
-    }
-
-    header h1 {
-        font-size: 18px;
-    }
-
-    .container {
-        padding: 12px;
-    }
-
-    .orders {
-        grid-template-columns: 1fr;
-    }
-
 }
 
 </style>
@@ -217,14 +158,13 @@ button {
 
 <body>
 
-
 <header>
 
     <h1>
         👨‍🍳 AI Bistro — Mətbəx
     </h1>
 
-    <div class="live">
+    <div class="connection">
         🟢 LIVE
     </div>
 
@@ -233,11 +173,12 @@ button {
 
 <div class="container">
 
-    <div id="orders"
-         class="orders">
+    <div
+        id="orders"
+        class="orders">
 
         <div class="empty">
-            🔄 Sifarişlər yüklənir...
+            Sifarişlər yüklənir...
         </div>
 
     </div>
@@ -247,343 +188,254 @@ button {
 
 <script>
 
-/* =====================================================
-   SUPABASE
-===================================================== */
-
 const SUPABASE_URL =
     "https://lwxnxcebzhbpjmrboosf.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_i2_aVgOrcZNYuwzlUGtK-w_kRhPDgmQ";
 
-
 const supabaseClient =
-    supabase.createClient(
+    window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
 
+let orders = [];
 
-/* =====================================================
-   LOAD ORDERS
-===================================================== */
+
+/* SIFARISLERI YUKLE */
 
 async function loadOrders() {
 
-    const container =
-        document.getElementById(
-            "orders"
-        );
-
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from("orders")
-                .select("*")
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
-
-
-        if (error) {
-            throw error;
-        }
-
-
-        const orders =
-            data || [];
-
-
-        if (!orders.length) {
-
-            container.innerHTML = `
-                <div class="empty">
-                    📭 Hazırda sifariş yoxdur.
-                </div>
-            `;
-
-            return;
-        }
-
-
-        container.innerHTML = "";
-
-
-        orders.forEach(order => {
-
-            renderOrder(
-                order,
-                container
+    const { data, error } =
+        await supabaseClient
+            .from("orders")
+            .select("*")
+            .in(
+                "status",
+                [
+                    "Yeni sifariş",
+                    "Hazırlanır",
+                    "Hazırdır"
+                ]
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: true
+                }
             );
 
-        });
-
-
-    } catch (error) {
+    if (error) {
 
         console.error(error);
 
-        container.innerHTML = `
-            <div class="error">
-                ❌ Sifarişlər yüklənmədi.
+        document.getElementById("orders")
+            .innerHTML = `
+                <div class="empty">
+                    Sifarişlər yüklənmədi.
+                </div>
+            `;
+
+        return;
+    }
+
+    orders = data || [];
+
+    renderOrders();
+}
+
+
+/* GOSTER */
+
+function renderOrders() {
+
+    const box =
+        document.getElementById("orders");
+
+    if (!orders.length) {
+
+        box.innerHTML = `
+            <div class="empty">
+                🍽️ Hazırda aktiv sifariş yoxdur.
             </div>
         `;
 
-    }
-
-}
-
-
-/* =====================================================
-   RENDER ORDER
-===================================================== */
-
-function renderOrder(
-    order,
-    container
-) {
-
-    const status =
-        order.status ||
-        "Yeni sifariş";
-
-
-    let orderClass =
-        "new";
-
-
-    let statusClass =
-        "new";
-
-
-    if (
-        status === "Hazırlanır"
-    ) {
-
-        orderClass =
-            "preparing";
-
-        statusClass =
-            "preparing";
-
+        return;
     }
 
 
-    if (
-        status === "Hazırdır"
-    ) {
+    box.innerHTML =
+        orders.map(order => {
 
-        orderClass =
-            "ready";
-
-        statusClass =
-            "ready";
-
-    }
+            const items =
+                Array.isArray(order.items)
+                    ? order.items
+                    : [];
 
 
-    if (
-        status === "Təqdim edildi"
-    ) {
-
-        orderClass =
-            "ready";
-
-        statusClass =
-            "ready";
-
-    }
+            const itemsHtml =
+                items.map(item => `
+                    <div>
+                        • ${escapeHtml(item.name)}
+                        — ${Number(item.price).toFixed(2)} AZN
+                    </div>
+                `).join("");
 
 
-    const items =
-        Array.isArray(
-            order.items
-        )
-        ? order.items
-        : [];
+            let orderClass = "";
 
+            if (
+                order.status ===
+                "Yeni sifariş"
+            ) {
 
-    const itemsHTML =
-        items.map(
-            item => `
+                orderClass = "new";
 
-                <div class="item">
-
-                    🍽️
-                    ${escapeHtml(
-                        item.name || ""
-                    )}
-
-                    <strong>
-                        ${Number(
-                            item.price || 0
-                        ).toFixed(2)}
-                        AZN
-                    </strong>
-
-                </div>
-
-            `
-        ).join("");
-
-
-    const createdAt =
-        order.created_at
-        ? new Date(
-            order.created_at
-          ).toLocaleTimeString(
-            "az-AZ",
-            {
-                hour: "2-digit",
-                minute: "2-digit"
             }
-          )
-        : "";
+
+            if (
+                order.status ===
+                "Hazırdır"
+            ) {
+
+                orderClass = "ready";
+
+            }
 
 
-    const div =
-        document.createElement(
-            "div"
-        );
+            const date =
+                new Date(
+                    order.created_at
+                );
 
 
-    div.className =
-        "order " +
-        orderClass;
+            return `
+
+                <div
+                    class="order ${orderClass}">
+
+                    <div class="table">
+
+                        🪑 Masa ${order.table_number}
+
+                    </div>
 
 
-    div.innerHTML = `
+                    <div class="time">
 
-        <div class="order-header">
+                        ${date.toLocaleString("az-AZ")}
 
-            <div class="table">
-                🪑 Masa №
-                ${order.table_number || 1}
-            </div>
-
-            <div class="time">
-                ${createdAt}
-            </div>
-
-        </div>
+                    </div>
 
 
-        <div class="status ${statusClass}">
-            ${escapeHtml(status)}
-        </div>
+                    <br>
 
 
-        ${
-            order.ai_used
-            ? `
-                <div class="ai">
-                    🤖 AI əlavə satış
+                    <div class="status">
+
+                        ${escapeHtml(
+                            order.status ||
+                            "Yeni sifariş"
+                        )}
+
+                    </div>
+
+
+                    ${
+                        order.ai_used
+                        ? `
+                            <div class="ai">
+                                🤖 AI sifarişi
+                            </div>
+                          `
+                        : ""
+                    }
+
+
+                    <div class="items">
+
+                        ${itemsHtml}
+
+                    </div>
+
+
+                    <div class="total">
+
+                        ${Number(order.total).toFixed(2)}
+                        AZN
+
+                    </div>
+
+
+                    <div class="actions">
+
+                        <button
+                            class="orange"
+                            onclick="changeStatus(
+                                ${order.id},
+                                'Hazırlanır'
+                            )">
+
+                            🔥 Hazırlanır
+
+                        </button>
+
+
+                        <button
+                            class="green"
+                            onclick="changeStatus(
+                                ${order.id},
+                                'Hazırdır'
+                            )">
+
+                            ✅ Hazırdır
+
+                        </button>
+
+
+                        <button
+                            class="blue"
+                            onclick="changeStatus(
+                                ${order.id},
+                                'Təqdim edildi'
+                            )">
+
+                            🍽️ Təqdim edildi
+
+                        </button>
+
+                    </div>
+
                 </div>
-            `
-            : ""
-        }
 
+            `;
 
-        <div class="items">
-
-            ${itemsHTML}
-
-        </div>
-
-
-        <div class="total">
-
-            Cəmi:
-            ${Number(
-                order.total || 0
-            ).toFixed(2)}
-            AZN
-
-        </div>
-
-
-        <div class="buttons">
-
-            <button
-                class="prepare"
-                onclick="changeStatus(
-                    ${order.id},
-                    'Hazırlanır'
-                )"
-            >
-                👨‍🍳 Hazırlanır
-            </button>
-
-
-            <button
-                class="ready"
-                onclick="changeStatus(
-                    ${order.id},
-                    'Hazırdır'
-                )"
-            >
-                ✅ Hazırdır
-            </button>
-
-
-            <button
-                class="done"
-                onclick="changeStatus(
-                    ${order.id},
-                    'Təqdim edildi'
-                )"
-            >
-                🍽️ Təqdim edildi
-            </button>
-
-        </div>
-
-    `;
-
-
-    container.appendChild(div);
-
+        }).join("");
 }
 
 
-/* =====================================================
-   CHANGE STATUS
-===================================================== */
+/* STATUS */
 
 async function changeStatus(
     id,
     status
 ) {
 
-    const {
-        error
-    } =
+    const { error } =
         await supabaseClient
             .from("orders")
             .update({
                 status: status
             })
-            .eq(
-                "id",
-                id
-            );
+            .eq("id", id);
 
 
     if (error) {
 
-        console.error(error);
-
         alert(
-            "❌ Status dəyişdirilmədi."
+            "Status dəyişmədi: " +
+            error.message
         );
 
         return;
@@ -591,83 +443,48 @@ async function changeStatus(
 
 
     loadOrders();
-
 }
 
 
-/* =====================================================
-   REALTIME
-===================================================== */
+/* ESCAPE */
 
-function startRealtime() {
+function escapeHtml(text) {
 
-    supabaseClient
-        .channel(
-            "kitchen-orders"
-        )
-        .on(
-            "postgres_changes",
-            {
-                event: "*",
-                schema: "public",
-                table: "orders"
-            },
-            function(payload) {
-
-                console.log(
-                    "Yeni sifariş/dəyişiklik:",
-                    payload
-                );
-
-                loadOrders();
-
-            }
-        )
-        .subscribe();
-
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
-/* =====================================================
-   ESCAPE
-===================================================== */
+/* REALTIME */
 
-function escapeHtml(value) {
+supabaseClient
+    .channel("kitchen-orders")
+    .on(
+        "postgres_changes",
+        {
+            event: "*",
+            schema: "public",
+            table: "orders"
+        },
+        () => {
 
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+            loadOrders();
 
-}
+        }
+    )
+    .subscribe();
 
 
-/* =====================================================
-   START
-===================================================== */
+/* START */
 
 loadOrders();
-
-startRealtime();
 
 </script>
 
 </body>
+
 </html>
