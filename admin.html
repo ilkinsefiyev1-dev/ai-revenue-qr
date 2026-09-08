@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="az">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>AI Bistro - Admin Panel</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 <style>
@@ -49,7 +54,8 @@ header h1 {
 
 .stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
     gap: 15px;
     margin-bottom: 25px;
 }
@@ -83,12 +89,10 @@ section h2 {
     margin-top: 0;
 }
 
-input,
-select {
+input {
     padding: 11px;
     border: 1px solid #d1d5db;
     border-radius: 8px;
-    font-size: 15px;
 }
 
 button {
@@ -97,6 +101,10 @@ button {
     padding: 10px 14px;
     cursor: pointer;
     font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.9;
 }
 
 .primary {
@@ -163,45 +171,10 @@ button {
     font-weight: bold;
 }
 
-.ai-panel {
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-}
-
-.ai-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
-}
-
-.ai-box {
-    background: white;
-    padding: 18px;
-    border-radius: 12px;
-    text-align: center;
-}
-
-.ai-box strong {
-    display: block;
-    font-size: 25px;
-    margin-top: 8px;
-}
-
-.ai-form {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-}
-
-.ai-form select,
-.ai-form input {
-    min-width: 180px;
-}
-
 .qr-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns:
+        repeat(auto-fill, minmax(180px, 1fr));
     gap: 15px;
 }
 
@@ -229,344 +202,507 @@ button {
     color: #6b7280;
 }
 
-.empty {
-    color: #777;
-    padding: 10px;
+.ai-panel {
+    background: #f0fdf4;
+    border: 2px solid #22c55e;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
 }
 
-@media(max-width:700px) {
-
-    .stats,
-    .ai-grid {
-        grid-template-columns: 1fr;
-    }
-
+.ai-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
 }
 
-@media(max-width:500px) {
+.ai-box {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.ai-box-title {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.ai-box-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+@media (max-width: 600px) {
 
     .container {
         padding: 12px;
     }
 
-    .ai-form {
-        flex-direction: column;
-    }
-
-    .ai-form select,
-    .ai-form input,
-    .ai-form button {
+    input {
         width: 100%;
-    }
-
-}
-
-@media print {
-
-    body {
-        background: white;
-    }
-
-    header,
-    .no-print,
-    section:not(.qr-section) {
-        display: none !important;
-    }
-
-    .qr-section {
-        box-shadow: none;
-    }
-
-    .qr-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .qr-card {
-        page-break-inside: avoid;
-        border: 1px solid #000;
+        margin-bottom: 8px;
     }
 
 }
 
 </style>
+
 </head>
+
 
 <body>
 
+
 <header>
-    <h1>🍽️ AI Bistro — Restoran İdarə Paneli</h1>
+
+    <h1>
+        🍽️ AI Bistro — Restoran İdarə Paneli
+    </h1>
+
 </header>
+
 
 <div class="container">
 
-<div id="connection" class="status">
+
+<div
+    id="connection"
+    class="status">
+
     🟡 Supabase bağlantısı yoxlanılır...
+
 </div>
 
 
-<!-- =========================
-     STATISTIKA
-========================= -->
+
+<!-- STATISTIKA -->
 
 <div class="stats">
 
+
     <div class="stat">
+
         <div class="stat-title">
             Sifariş sayı
         </div>
-        <div id="orderCount" class="stat-value">
+
+        <div
+            id="orderCount"
+            class="stat-value">
+
             0
+
         </div>
+
     </div>
 
+
     <div class="stat">
+
         <div class="stat-title">
             Ümumi satış
         </div>
-        <div id="sales" class="stat-value">
+
+        <div
+            id="sales"
+            class="stat-value">
+
             0.00 AZN
+
         </div>
+
     </div>
 
+
     <div class="stat">
+
         <div class="stat-title">
             AI əlavə satış
         </div>
-        <div id="aiRevenue" class="stat-value">
+
+        <div
+            id="aiRevenue"
+            class="stat-value">
+
             0.00 AZN
+
         </div>
+
     </div>
 
+
     <div class="stat">
+
         <div class="stat-title">
             AI sifarişlər
         </div>
-        <div id="aiOrders" class="stat-value">
+
+        <div
+            id="aiOrders"
+            class="stat-value">
+
             0
+
         </div>
+
     </div>
 
+
     <div class="stat">
+
         <div class="stat-title">
             AI istifadə faizi
         </div>
-        <div id="aiRate" class="stat-value">
+
+        <div
+            id="aiRate"
+            class="stat-value">
+
             0%
+
         </div>
+
     </div>
 
+
     <div class="stat">
+
         <div class="stat-title">
             Orta AI gəliri
         </div>
-        <div id="avgAiRevenue" class="stat-value">
+
+        <div
+            id="avgAiRevenue"
+            class="stat-value">
+
             0.00 AZN
+
         </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- AI REVENUE ENGINE -->
+
+<div class="ai-panel">
+
+    <h2>
+        🤖 AI Revenue Engine
+    </h2>
+
+    <p>
+        AI tövsiyələrinin restoran satışlarına təsirini
+        burada görə bilərsiniz.
+    </p>
+
+
+    <div class="ai-grid">
+
+
+        <div class="ai-box">
+
+            <div class="ai-box-title">
+                AI istifadə olunan sifarişlər
+            </div>
+
+            <div
+                id="aiEngineOrders"
+                class="ai-box-value">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="ai-box">
+
+            <div class="ai-box-title">
+                AI qəbul faizi
+            </div>
+
+            <div
+                id="aiAcceptRate"
+                class="ai-box-value">
+
+                0%
+
+            </div>
+
+        </div>
+
+
+        <div class="ai-box">
+
+            <div class="ai-box-title">
+                AI əlavə gəliri
+            </div>
+
+            <div
+                id="aiEngineRevenue"
+                class="ai-box-value">
+
+                0.00 AZN
+
+            </div>
+
+        </div>
+
+
+        <div class="ai-box">
+
+            <div class="ai-box-title">
+                Orta AI gəliri
+            </div>
+
+            <div
+                id="aiEngineAverage"
+                class="ai-box-value">
+
+                0.00 AZN
+
+            </div>
+
+        </div>
+
+
     </div>
 
 </div>
 
 
-<!-- =========================
-     AI REVENUE ENGINE
-========================= -->
 
-<section class="ai-panel">
-
-    <h2>🤖 AI Revenue Engine</h2>
-
-    <p class="small">
-        AI tövsiyələrinin restoran satışlarına təsirini burada görə bilərsiniz.
-    </p>
-
-    <div class="ai-grid">
-
-        <div class="ai-box">
-            AI istifadə olunan sifarişlər
-            <strong id="engineAiOrders">0</strong>
-        </div>
-
-        <div class="ai-box">
-            AI qəbul faizi
-            <strong id="engineAiRate">0%</strong>
-        </div>
-
-        <div class="ai-box">
-            AI əlavə gəliri
-            <strong id="engineAiRevenue">0.00 AZN</strong>
-        </div>
-
-        <div class="ai-box">
-            Orta AI gəliri
-            <strong id="engineAvgAiRevenue">0.00 AZN</strong>
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     MENU
-========================= -->
+<!-- MENU -->
 
 <section>
 
-<h2>🍔 Menyu idarəetməsi</h2>
+<h2>
+    🍔 Menyu idarəetməsi
+</h2>
 
-<div class="actions">
+
+<div>
 
     <input
         id="productName"
-        placeholder="Məhsul adı"
-    >
+        placeholder="Məhsul adı">
+
 
     <input
         id="productPrice"
         type="number"
         step="0.01"
-        placeholder="Qiymət"
-    >
+        placeholder="Qiymət">
+
 
     <button
         class="primary"
-        onclick="addProduct()"
-    >
+        onclick="addProduct()">
+
         + Məhsul əlavə et
+
     </button>
 
 </div>
+
 
 <div id="menuList"></div>
 
 </section>
 
 
-<!-- =========================
-     AI TƏKLİFLƏRİ
-========================= -->
+
+<!-- AI TƏKLİFLƏRİ -->
 
 <section>
 
-<h2>🤖 AI Təklifləri</h2>
+<h2>
+    🤖 AI Təklifləri
+</h2>
 
 <p class="small">
-Müştəri seçdiyi məhsula görə avtomatik əlavə məhsul təklifi alacaq.
+    Müştəri seçdiyi məhsula görə avtomatik
+    əlavə məhsul təklifi alacaq.
 </p>
 
-<div class="ai-form">
 
-    <select id="aiTrigger">
+<div>
+
+    <select
+        id="triggerProduct"
+        style="
+            padding:11px;
+            border:1px solid #d1d5db;
+            border-radius:8px;
+            margin-right:5px;
+        ">
+
         <option value="">
             Əsas məhsulu seç
         </option>
+
     </select>
 
-    <select id="aiRecommended">
+
+    <select
+        id="recommendedProduct"
+        style="
+            padding:11px;
+            border:1px solid #d1d5db;
+            border-radius:8px;
+            margin-right:5px;
+        ">
+
         <option value="">
-            Təklif ediləcək məhsulu seç
+            Tövsiyə məhsulunu seç
         </option>
+
     </select>
+
 
     <input
-        id="aiComboPrice"
+        id="comboPrice"
         type="number"
         step="0.01"
-        placeholder="Təklif qiyməti"
-    >
+        placeholder="AI qiyməti">
+
 
     <button
         class="green"
-        onclick="addAIRecommendation()"
-    >
+        onclick="addAIRule()">
+
         + AI təklifi yarat
+
     </button>
 
 </div>
 
-<div id="aiRecommendationList"></div>
+
+<div
+    id="aiRulesList"
+    style="margin-top:15px">
+
+</div>
 
 </section>
 
 
-<!-- =========================
-     QR
-========================= -->
 
-<section class="qr-section">
+<!-- QR -->
 
-<h2>📱 QR Masa Sistemi</h2>
+<section>
+
+<h2>
+    📱 QR Masa Sistemi
+</h2>
 
 <p class="small">
-QR kodu skan edən müştəri birbaşa həmin masanın sifariş səhifəsinə keçəcək.
+
+    QR kodu skan edən müştəri birbaşa
+    həmin masanın sifariş səhifəsinə keçəcək.
+
 </p>
 
-<div class="actions no-print">
+
+<div class="actions">
+
 
     <input
         id="tableCount"
         type="number"
         min="1"
-        max="100"
-        value="10"
-    >
+        value="10">
+
 
     <button
         class="primary"
-        onclick="generateQRs()"
-    >
+        onclick="generateQRs()">
+
         QR-ları yarat
+
     </button>
+
 
     <button
         class="gray"
-        onclick="window.print()"
-    >
+        onclick="window.print()">
+
         🖨️ Çap et
+
     </button>
 
+
 </div>
+
 
 <div
     id="qrGrid"
     class="qr-grid"
-    style="margin-top:20px"
-></div>
+    style="margin-top:20px">
+
+</div>
 
 </section>
 
 
-<!-- =========================
-     ORDERS
-========================= -->
+
+<!-- SİFARİŞLƏR -->
 
 <section>
 
-<h2>📦 Sifarişlər</h2>
+<h2>
+    📦 Sifarişlər
+</h2>
+
 
 <div id="orders">
+
     Sifarişlər yüklənir...
+
 </div>
 
 </section>
 
+
 </div>
+
 
 
 <script>
 
-/* =========================
+
+/* ==================================================
    SUPABASE
-========================= */
+   ================================================== */
+
 
 const SUPABASE_URL =
     "https://lwxnxcebzhbpjmrboosf.supabase.co";
 
+
 /*
-   BURAYA ÖZ SUPABASE PUBLISHABLE KEY-İNİ YAZ.
+   BURAYA SUPABASE-DƏN KÖÇÜRDÜYÜN
+   PUBLISHABLE KEY-I YAZ.
+
+   Məsələn:
+
+   const SUPABASE_KEY =
+       "sb_publishable_....";
+
+   SECRET KEY YAZMA.
 */
+
+
 const SUPABASE_KEY =
-    "BURAYA_PUBLISHABLE_KEY_YAZ";
+    "sb_publishable_i2_aVgOrcZNYuwzlUGtK-w_kRhPDgmQ";
 
 
 const supabaseClient =
@@ -577,84 +713,145 @@ const supabaseClient =
 
 
 let orders = [];
+
 let menu = [];
-let aiRecommendations = [];
+
+let aiRules = [];
 
 
-/* =========================
-   ESCAPE
-========================= */
 
-function escapeHtml(text) {
-
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
-
-
-/* =========================
+/* ==================================================
    CONNECTION
-========================= */
+   ================================================== */
+
 
 async function checkConnection() {
 
-    const { error } =
-        await supabaseClient
-            .from("orders")
-            .select("id")
-            .limit(1);
-
     const box =
-        document.getElementById("connection");
+        document.getElementById(
+            "connection"
+        );
 
-    if (error) {
 
-        box.textContent =
-            "🔴 Supabase bağlantısında problem var.";
+    box.textContent =
+        "🟡 Supabase bağlantısı yoxlanılır...";
 
-        box.style.background = "#fee2e2";
-        box.style.color = "#991b1b";
 
-    } else {
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("orders")
+                .select("id")
+                .limit(1);
+
+
+        if (error) {
+
+            console.error(
+                "Supabase connection error:",
+                error
+            );
+
+
+            box.textContent =
+                "🔴 Supabase bağlantısında problem var: " +
+                error.message;
+
+
+            box.style.background =
+                "#fee2e2";
+
+
+            box.style.color =
+                "#991b1b";
+
+
+            return false;
+
+        }
+
 
         box.textContent =
             "🟢 Supabase bağlantısı aktivdir.";
 
+
+        box.style.background =
+            "#dcfce7";
+
+
+        box.style.color =
+            "#166534";
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        box.textContent =
+            "🔴 Supabase bağlantı xətası.";
+
+
+        box.style.background =
+            "#fee2e2";
+
+
+        box.style.color =
+            "#991b1b";
+
+
+        return false;
+
     }
 
 }
 
 
-/* =========================
+
+/* ==================================================
    ORDERS
-========================= */
+   ================================================== */
+
 
 async function loadOrders() {
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("orders")
             .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
     if (error) {
 
-        console.error(error);
-
-        document.getElementById("orders").innerHTML =
-            "<p class='empty'>Sifarişlər yüklənmədi.</p>";
+        console.error(
+            "Orders error:",
+            error
+        );
 
         return;
+
     }
 
-    orders = data || [];
+
+    orders =
+        data || [];
+
 
     renderOrders();
 
@@ -663,9 +860,11 @@ async function loadOrders() {
 }
 
 
-/* =========================
+
+/* ==================================================
    STATISTICS
-========================= */
+   ================================================== */
+
 
 function updateStats() {
 
@@ -675,33 +874,56 @@ function updateStats() {
 
     const sales =
         orders.reduce(
+
             (sum, order) =>
-                sum + Number(order.total || 0),
+
+                sum +
+                Number(
+                    order.total || 0
+                ),
+
             0
+
         );
 
 
     const aiOrders =
         orders.filter(
-            order => order.ai_used === true
+
+            order =>
+                order.ai_used === true
+
         ).length;
 
 
     const aiRevenue =
         orders
+
             .filter(
-                order => order.ai_used === true
+                order =>
+                    order.ai_used === true
             )
+
             .reduce(
+
                 (sum, order) =>
-                    sum + Number(order.total || 0),
+
+                    sum +
+                    Number(
+                        order.total || 0
+                    ),
+
                 0
+
             );
 
 
     const aiRate =
         totalOrders
-            ? (aiOrders / totalOrders) * 100
+            ? (
+                aiOrders /
+                totalOrders
+            ) * 100
             : 0;
 
 
@@ -711,207 +933,305 @@ function updateStats() {
             : 0;
 
 
-    document.getElementById("orderCount")
-        .textContent = totalOrders;
+
+    document.getElementById(
+        "orderCount"
+    ).textContent =
+        totalOrders;
 
 
-    document.getElementById("sales")
-        .textContent =
-        sales.toFixed(2) + " AZN";
+    document.getElementById(
+        "sales"
+    ).textContent =
+        sales.toFixed(2) +
+        " AZN";
 
 
-    document.getElementById("aiRevenue")
-        .textContent =
-        aiRevenue.toFixed(2) + " AZN";
+    document.getElementById(
+        "aiRevenue"
+    ).textContent =
+        aiRevenue.toFixed(2) +
+        " AZN";
 
 
-    document.getElementById("aiOrders")
-        .textContent =
+    document.getElementById(
+        "aiOrders"
+    ).textContent =
         aiOrders;
 
 
-    document.getElementById("aiRate")
-        .textContent =
-        aiRate.toFixed(0) + "%";
+    document.getElementById(
+        "aiRate"
+    ).textContent =
+        aiRate.toFixed(0) +
+        "%";
 
 
-    document.getElementById("avgAiRevenue")
-        .textContent =
-        avgAi.toFixed(2) + " AZN";
+    document.getElementById(
+        "avgAiRevenue"
+    ).textContent =
+        avgAi.toFixed(2) +
+        " AZN";
 
 
-    document.getElementById("engineAiOrders")
-        .textContent =
+    document.getElementById(
+        "aiEngineOrders"
+    ).textContent =
         aiOrders;
 
 
-    document.getElementById("engineAiRate")
-        .textContent =
-        aiRate.toFixed(0) + "%";
+    document.getElementById(
+        "aiAcceptRate"
+    ).textContent =
+        aiRate.toFixed(0) +
+        "%";
 
 
-    document.getElementById("engineAiRevenue")
-        .textContent =
-        aiRevenue.toFixed(2) + " AZN";
+    document.getElementById(
+        "aiEngineRevenue"
+    ).textContent =
+        aiRevenue.toFixed(2) +
+        " AZN";
 
 
-    document.getElementById("engineAvgAiRevenue")
-        .textContent =
-        avgAi.toFixed(2) + " AZN";
+    document.getElementById(
+        "aiEngineAverage"
+    ).textContent =
+        avgAi.toFixed(2) +
+        " AZN";
 
 }
 
 
-/* =========================
+
+/* ==================================================
    RENDER ORDERS
-========================= */
+   ================================================== */
+
 
 function renderOrders() {
 
     const box =
-        document.getElementById("orders");
+        document.getElementById(
+            "orders"
+        );
 
 
     if (!orders.length) {
 
         box.innerHTML =
-            "<p class='empty'>Sifariş yoxdur.</p>";
+            "<p>Sifariş yoxdur.</p>";
 
         return;
+
     }
 
 
     box.innerHTML =
-        orders.map(order => {
 
-            const items =
-                Array.isArray(order.items)
-                    ? order.items
-                    : [];
+        orders.map(
+            order => {
 
-
-            const itemsHtml =
-                items.map(item =>
-
-                    `${escapeHtml(item.name)}
-                    — ${Number(item.price).toFixed(2)} AZN`
-
-                ).join("<br>");
+                const items =
+                    Array.isArray(
+                        order.items
+                    )
+                        ? order.items
+                        : [];
 
 
-            return `
+                const itemsHtml =
 
-                <div class="order">
+                    items.map(
+                        item => `
 
-                    <div class="order-header">
+                            ${
+                                item.ai
+                                    ? '<span class="ai">AI</span> '
+                                    : ''
+                            }
 
-                        <div>
-                            <b>
-                                🪑 Masa ${order.table_number}
-                            </b>
+                            ${escapeHtml(
+                                item.name
+                            )}
+
+                            —
+                            ${Number(
+                                item.price
+                            ).toFixed(2)}
+                            AZN
+
+                        `
+                    )
+
+                    .join("<br>");
+
+
+                return `
+
+                    <div class="order">
+
+                        <div
+                            class="order-header">
+
+                            <div>
+
+                                <b>
+                                    🪑 Masa
+                                    ${escapeHtml(
+                                        order.table_number
+                                    )}
+                                </b>
+
+                            </div>
+
+
+                            <div>
+
+                                <b>
+
+                                    ${Number(
+                                        order.total || 0
+                                    ).toFixed(2)}
+
+                                    AZN
+
+                                </b>
+
+                            </div>
+
                         </div>
 
-                        <div>
-                            <b>
-                                ${Number(order.total).toFixed(2)}
-                                AZN
-                            </b>
+
+                        <div
+                            class="order-items">
+
+                            ${itemsHtml}
+
                         </div>
 
+
+                        <br>
+
+
+                        ${
+                            order.ai_used
+
+                                ? `
+
+                                    <span class="ai">
+
+                                        🤖 AI istifadə edildi
+
+                                    </span>
+
+                                  `
+
+                                : ""
+
+                        }
+
+
+                        <br><br>
+
+
+                        <b>Status:</b>
+
+                        ${escapeHtml(
+                            order.status ||
+                            "Yeni sifariş"
+                        )}
+
+
+                        <br><br>
+
+
+                        <div
+                            class="actions">
+
+
+                            <button
+                                class="orange"
+                                onclick="
+                                    changeStatus(
+                                        ${order.id},
+                                        'Hazırlanır'
+                                    )
+                                ">
+
+                                Hazırlanır
+
+                            </button>
+
+
+                            <button
+                                class="green"
+                                onclick="
+                                    changeStatus(
+                                        ${order.id},
+                                        'Hazırdır'
+                                    )
+                                ">
+
+                                Hazırdır
+
+                            </button>
+
+
+                            <button
+                                class="primary"
+                                onclick="
+                                    changeStatus(
+                                        ${order.id},
+                                        'Təqdim edildi'
+                                    )
+                                ">
+
+                                Təqdim edildi
+
+                            </button>
+
+
+                        </div>
+
+
                     </div>
 
+                `;
 
-                    <div class="order-items">
+            }
 
-                        ${itemsHtml}
-
-                    </div>
-
-
-                    ${
-                        order.ai_used
-                        ?
-                        `<br>
-                         <span class="ai">
-                            🤖 AI istifadə edildi
-                         </span>`
-                        :
-                        ""
-                    }
-
-
-                    <br><br>
-
-
-                    <b>Status:</b>
-
-                    ${escapeHtml(
-                        order.status ||
-                        "Yeni sifariş"
-                    )}
-
-
-                    <br><br>
-
-
-                    <div class="actions">
-
-                        <button
-                            class="orange"
-                            onclick="changeStatus(
-                                ${order.id},
-                                'Hazırlanır'
-                            )"
-                        >
-                            👨‍🍳 Hazırlanır
-                        </button>
-
-
-                        <button
-                            class="green"
-                            onclick="changeStatus(
-                                ${order.id},
-                                'Hazırdır'
-                            )"
-                        >
-                            ✅ Hazırdır
-                        </button>
-
-
-                        <button
-                            class="primary"
-                            onclick="changeStatus(
-                                ${order.id},
-                                'Təqdim edildi'
-                            )"
-                        >
-                            🍽️ Təqdim edildi
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }).join("");
+        ).join("");
 
 }
 
 
-/* =========================
-   CHANGE STATUS
-========================= */
 
-async function changeStatus(id, status) {
+/* ==================================================
+   STATUS
+   ================================================== */
 
-    const { error } =
+
+async function changeStatus(
+    id,
+    status
+) {
+
+    const {
+        error
+    } =
         await supabaseClient
+
             .from("orders")
+
             .update({
                 status: status
             })
-            .eq("id", id);
+
+            .eq(
+                "id",
+                id
+            );
 
 
     if (error) {
@@ -922,6 +1242,7 @@ async function changeStatus(id, status) {
         );
 
         return;
+
     }
 
 
@@ -930,13 +1251,18 @@ async function changeStatus(id, status) {
 }
 
 
-/* =========================
-   MENU
-========================= */
+
+/* ==================================================
+   MENU LOAD
+   ================================================== */
+
 
 async function loadMenu() {
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("menu")
             .select("*")
@@ -945,151 +1271,202 @@ async function loadMenu() {
 
     if (error) {
 
-        console.error(error);
+        console.error(
+            "Menu error:",
+            error
+        );
 
         return;
+
     }
 
 
-    menu = data || [];
+    menu =
+        data || [];
 
 
     renderMenu();
 
-    populateAISelects();
-
-    renderAIRecommendations();
+    updateProductSelects();
 
 }
 
 
-/* =========================
-   RENDER MENU
-========================= */
+
+/* ==================================================
+   MENU RENDER
+   ================================================== */
+
 
 function renderMenu() {
 
     const box =
-        document.getElementById("menuList");
+        document.getElementById(
+            "menuList"
+        );
 
 
     if (!menu.length) {
 
         box.innerHTML =
-            "<p class='empty'>Menyu boşdur.</p>";
+            "<p>Menyu boşdur.</p>";
 
         return;
+
     }
 
 
     box.innerHTML =
-        menu.map(product => `
 
-            <div class="product-row">
+        menu.map(
+            product => `
 
-                <div>
+                <div
+                    class="product-row">
 
-                    <b>
-                        ${escapeHtml(product.name)}
-                    </b>
 
-                    <br>
+                    <div>
 
-                    <span class="small">
-                        ${Number(product.price).toFixed(2)}
-                        AZN
-                    </span>
+                        <b>
+                            ${escapeHtml(
+                                product.name
+                            )}
+                        </b>
 
-                    <br>
 
-                    <span class="small">
+                        <br>
 
-                        ${
-                            product.active
-                            ? "🟢 Aktiv"
-                            : "🔴 Deaktiv"
-                        }
 
-                    </span>
+                        <span
+                            class="small">
+
+                            ${Number(
+                                product.price
+                            ).toFixed(2)}
+
+                            AZN
+
+                        </span>
+
+
+                        <br>
+
+
+                        <span
+                            class="small">
+
+                            ${
+                                product.active
+
+                                    ? "🟢 Aktiv"
+
+                                    : "🔴 Deaktiv"
+                            }
+
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="actions">
+
+
+                        <button
+                            class="gray"
+                            onclick="
+                                editProduct(
+                                    ${product.id}
+                                )
+                            ">
+
+                            Qiymət
+
+                        </button>
+
+
+                        <button
+                            class="${
+                                product.active
+                                    ? "orange"
+                                    : "green"
+                            }"
+                            onclick="
+                                toggleProduct(
+                                    ${product.id},
+                                    ${product.active}
+                                )
+                            ">
+
+                            ${
+                                product.active
+                                    ? "Deaktiv et"
+                                    : "Aktiv et"
+                            }
+
+                        </button>
+
+
+                        <button
+                            class="red"
+                            onclick="
+                                deleteProduct(
+                                    ${product.id}
+                                )
+                            ">
+
+                            Sil
+
+                        </button>
+
+
+                    </div>
+
 
                 </div>
 
-
-                <div class="actions">
-
-                    <button
-                        class="gray"
-                        onclick="editProduct(${product.id})"
-                    >
-                        ✏️ Qiymət
-                    </button>
-
-
-                    <button
-                        class="${
-                            product.active
-                            ? "orange"
-                            : "green"
-                        }"
-                        onclick="toggleProduct(
-                            ${product.id},
-                            ${product.active}
-                        )"
-                    >
-
-                        ${
-                            product.active
-                            ? "Deaktiv et"
-                            : "Aktiv et"
-                        }
-
-                    </button>
-
-
-                    <button
-                        class="red"
-                        onclick="deleteProduct(${product.id})"
-                    >
-                        🗑️ Sil
-                    </button>
-
-                </div>
-
-            </div>
-
-        `).join("");
+            `
+        ).join("");
 
 }
 
 
-/* =========================
+
+/* ==================================================
    ADD PRODUCT
-========================= */
+   ================================================== */
+
 
 async function addProduct() {
 
     const name =
-        document
-            .getElementById("productName")
-            .value
-            .trim();
+        document.getElementById(
+            "productName"
+        )
+        .value
+        .trim();
 
 
     const price =
         Number(
-            document
-                .getElementById("productPrice")
-                .value
+            document.getElementById(
+                "productPrice"
+            ).value
         );
 
 
-    if (!name || !price || price <= 0) {
+    if (
+        !name ||
+        !price ||
+        price <= 0
+    ) {
 
         alert(
             "Məhsul adı və düzgün qiymət yaz."
         );
 
         return;
+
     }
 
 
@@ -1097,18 +1474,26 @@ async function addProduct() {
         Date.now();
 
 
-    const { error } =
+    const {
+        error
+    } =
         await supabaseClient
+
             .from("menu")
+
             .insert({
 
-                id: id,
+                id:
+                    id,
 
-                name: name,
+                name:
+                    name,
 
-                price: price,
+                price:
+                    price,
 
-                active: true
+                active:
+                    true
 
             });
 
@@ -1121,17 +1506,18 @@ async function addProduct() {
         );
 
         return;
+
     }
 
 
-    document
-        .getElementById("productName")
-        .value = "";
+    document.getElementById(
+        "productName"
+    ).value = "";
 
 
-    document
-        .getElementById("productPrice")
-        .value = "";
+    document.getElementById(
+        "productPrice"
+    ).value = "";
 
 
     loadMenu();
@@ -1139,15 +1525,19 @@ async function addProduct() {
 }
 
 
-/* =========================
+
+/* ==================================================
    EDIT PRODUCT
-========================= */
+   ================================================== */
+
 
 async function editProduct(id) {
 
     const product =
         menu.find(
-            item => item.id === id
+            item =>
+                Number(item.id) ===
+                Number(id)
         );
 
 
@@ -1161,7 +1551,9 @@ async function editProduct(id) {
         );
 
 
-    if (newPrice === null) return;
+    if (
+        newPrice === null
+    ) return;
 
 
     const price =
@@ -1169,8 +1561,8 @@ async function editProduct(id) {
 
 
     if (
-        isNaN(price) ||
-        price <= 0
+        !Number.isFinite(price) ||
+        price < 0
     ) {
 
         alert(
@@ -1178,23 +1570,35 @@ async function editProduct(id) {
         );
 
         return;
+
     }
 
 
-    const { error } =
+    const {
+        error
+    } =
         await supabaseClient
+
             .from("menu")
+
             .update({
                 price: price
             })
-            .eq("id", id);
+
+            .eq(
+                "id",
+                id
+            );
 
 
     if (error) {
 
-        alert(error.message);
+        alert(
+            error.message
+        );
 
         return;
+
     }
 
 
@@ -1203,29 +1607,45 @@ async function editProduct(id) {
 }
 
 
-/* =========================
+
+/* ==================================================
    TOGGLE PRODUCT
-========================= */
+   ================================================== */
+
 
 async function toggleProduct(
     id,
     active
 ) {
 
-    const { error } =
+    const {
+        error
+    } =
         await supabaseClient
+
             .from("menu")
+
             .update({
-                active: !active
+
+                active:
+                    !active
+
             })
-            .eq("id", id);
+
+            .eq(
+                "id",
+                id
+            );
 
 
     if (error) {
 
-        alert(error.message);
+        alert(
+            error.message
+        );
 
         return;
+
     }
 
 
@@ -1234,9 +1654,11 @@ async function toggleProduct(
 }
 
 
-/* =========================
+
+/* ==================================================
    DELETE PRODUCT
-========================= */
+   ================================================== */
+
 
 async function deleteProduct(id) {
 
@@ -1244,21 +1666,36 @@ async function deleteProduct(id) {
         !confirm(
             "Bu məhsulu silmək istəyirsən?"
         )
-    ) return;
+    ) {
+
+        return;
+
+    }
 
 
-    const { error } =
+    const {
+        error
+    } =
         await supabaseClient
+
             .from("menu")
+
             .delete()
-            .eq("id", id);
+
+            .eq(
+                "id",
+                id
+            );
 
 
     if (error) {
 
-        alert(error.message);
+        alert(
+            error.message
+        );
 
         return;
+
     }
 
 
@@ -1267,160 +1704,173 @@ async function deleteProduct(id) {
 }
 
 
+
 /* ==================================================
-   AI RECOMMENDATIONS
-================================================== */
+   PRODUCT SELECTS
+   ================================================== */
 
-async function loadAIRecommendations() {
 
-    const { data, error } =
+function updateProductSelects() {
+
+    const trigger =
+        document.getElementById(
+            "triggerProduct"
+        );
+
+
+    const recommended =
+        document.getElementById(
+            "recommendedProduct"
+        );
+
+
+    trigger.innerHTML = `
+
+        <option value="">
+            Əsas məhsulu seç
+        </option>
+
+    `;
+
+
+    recommended.innerHTML = `
+
+        <option value="">
+            Tövsiyə məhsulunu seç
+        </option>
+
+    `;
+
+
+    menu
+
+        .filter(
+            product =>
+                product.active
+        )
+
+        .forEach(
+            product => {
+
+                const option1 =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option1.value =
+                    product.id;
+
+
+                option1.textContent =
+                    product.name +
+                    " — " +
+                    Number(
+                        product.price
+                    ).toFixed(2) +
+                    " AZN";
+
+
+                trigger.appendChild(
+                    option1
+                );
+
+
+                const option2 =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option2.value =
+                    product.id;
+
+
+                option2.textContent =
+                    product.name +
+                    " — " +
+                    Number(
+                        product.price
+                    ).toFixed(2) +
+                    " AZN";
+
+
+                recommended.appendChild(
+                    option2
+                );
+
+            }
+        );
+
+}
+
+
+
+/* ==================================================
+   LOAD AI RULES
+   ================================================== */
+
+
+async function loadAIRules() {
+
+    const {
+        data,
+        error
+    } =
         await supabaseClient
-            .from("ai_recommendations")
+
+            .from(
+                "ai_recommendations"
+            )
+
             .select("*")
-            .eq("active", true)
-            .order("id");
+
+            .order(
+                "id"
+            );
 
 
     if (error) {
 
         console.error(
-            "AI recommendations:",
+            "AI rules error:",
             error
         );
 
         return;
+
     }
 
 
-    aiRecommendations =
+    aiRules =
         data || [];
 
 
-    populateAISelects();
-
-    renderAIRecommendations();
+    renderAIRules();
 
 }
 
 
-/* =========================
-   AI SELECTS
-========================= */
 
-function populateAISelects() {
-
-    const trigger =
-        document.getElementById(
-            "aiTrigger"
-        );
-
-
-    const recommended =
-        document.getElementById(
-            "aiRecommended"
-        );
-
-
-    if (!trigger || !recommended)
-        return;
-
-
-    const oldTrigger =
-        trigger.value;
-
-
-    const oldRecommended =
-        recommended.value;
-
-
-    trigger.innerHTML =
-        `
-        <option value="">
-            Əsas məhsulu seç
-        </option>
-        ` +
-        menu
-            .filter(product => product.active)
-            .map(product => `
-
-                <option value="${product.id}">
-
-                    ${escapeHtml(product.name)}
-                    —
-                    ${Number(product.price).toFixed(2)} AZN
-
-                </option>
-
-            `)
-            .join("");
-
-
-    recommended.innerHTML =
-        `
-        <option value="">
-            Təklif ediləcək məhsulu seç
-        </option>
-        ` +
-        menu
-            .filter(product => product.active)
-            .map(product => `
-
-                <option value="${product.id}">
-
-                    ${escapeHtml(product.name)}
-                    —
-                    ${Number(product.price).toFixed(2)} AZN
-
-                </option>
-
-            `)
-            .join("");
-
-
-    if (
-        menu.some(
-            p => String(p.id) === oldTrigger
-        )
-    ) {
-
-        trigger.value =
-            oldTrigger;
-
-    }
-
-
-    if (
-        menu.some(
-            p => String(p.id) === oldRecommended
-        )
-    ) {
-
-        recommended.value =
-            oldRecommended;
-
-    }
-
-}
-
-
-/* =========================
+/* ==================================================
    ADD AI RULE
-========================= */
+   ================================================== */
 
-async function addAIRecommendation() {
 
-    const trigger =
+async function addAIRule() {
+
+    const triggerId =
         Number(
             document.getElementById(
-                "aiTrigger"
+                "triggerProduct"
             ).value
         );
 
 
-    const recommended =
+    const recommendedId =
         Number(
             document.getElementById(
-                "aiRecommended"
+                "recommendedProduct"
             ).value
         );
 
@@ -1428,69 +1878,71 @@ async function addAIRecommendation() {
     const comboPrice =
         Number(
             document.getElementById(
-                "aiComboPrice"
+                "comboPrice"
             ).value
         );
 
 
     if (
-        !trigger ||
-        !recommended ||
-        !comboPrice ||
-        comboPrice <= 0
+        !triggerId ||
+        !recommendedId
     ) {
 
         alert(
-            "Əsas məhsulu, təklif məhsulunu və qiyməti seç."
+            "Əsas və tövsiyə məhsulunu seç."
         );
 
         return;
+
     }
 
 
     if (
-        trigger === recommended
+        triggerId ===
+        recommendedId
     ) {
 
         alert(
-            "Eyni məhsulu seçmək olmaz."
+            "Əsas məhsul ilə tövsiyə məhsulu eyni ola bilməz."
         );
 
         return;
+
     }
 
 
-    const existing =
-        aiRecommendations.find(
-            rule =>
-                Number(rule.trigger_product_id)
-                    === trigger
-                &&
-                Number(rule.recommended_product_id)
-                    === recommended
-        );
-
-
-    if (existing) {
+    if (
+        !Number.isFinite(
+            comboPrice
+        ) ||
+        comboPrice <= 0
+    ) {
 
         alert(
-            "Bu AI təklifi artıq mövcuddur."
+            "AI qiymətini düzgün yaz."
         );
 
         return;
+
     }
 
 
-    const { error } =
+    const {
+        error
+    } =
         await supabaseClient
-            .from("ai_recommendations")
+
+            .from(
+                "ai_recommendations"
+            )
+
             .insert({
 
                 trigger_product_id:
-                    trigger,
+                    triggerId,
 
                 recommended_product_id:
-                    recommended,
+                    recommendedId,
 
                 combo_price:
                     comboPrice,
@@ -1509,71 +1961,59 @@ async function addAIRecommendation() {
         );
 
         return;
+
     }
 
 
-    document
-        .getElementById(
-            "aiComboPrice"
-        )
-        .value = "";
+    document.getElementById(
+        "comboPrice"
+    ).value = "";
 
 
-    document
-        .getElementById(
-            "aiTrigger"
-        )
-        .value = "";
-
-
-    document
-        .getElementById(
-            "aiRecommended"
-        )
-        .value = "";
-
-
-    loadAIRecommendations();
+    loadAIRules();
 
 }
 
 
-/* =========================
-   RENDER AI RULES
-========================= */
 
-function renderAIRecommendations() {
+/* ==================================================
+   RENDER AI RULES
+   ================================================== */
+
+
+function renderAIRules() {
 
     const box =
         document.getElementById(
-            "aiRecommendationList"
+            "aiRulesList"
         );
 
 
-    if (!box)
-        return;
+    if (!aiRules.length) {
 
-
-    if (
-        !aiRecommendations.length
-    ) {
-
-        box.innerHTML =
-            "<p class='empty'>Hələ AI təklifi yoxdur.</p>";
+        box.innerHTML = `
+            <p class="small">
+                Hələ AI təklifi yoxdur.
+            </p>
+        `;
 
         return;
+
     }
 
 
     box.innerHTML =
-        aiRecommendations
-            .map(rule => {
+
+        aiRules.map(
+            rule => {
 
                 const trigger =
                     menu.find(
                         product =>
-                            Number(product.id)
-                            === Number(
+                            Number(
+                                product.id
+                            ) ===
+                            Number(
                                 rule.trigger_product_id
                             )
                     );
@@ -1582,8 +2022,10 @@ function renderAIRecommendations() {
                 const recommended =
                     menu.find(
                         product =>
-                            Number(product.id)
-                            === Number(
+                            Number(
+                                product.id
+                            ) ===
+                            Number(
                                 rule.recommended_product_id
                             )
                     );
@@ -1591,108 +2033,236 @@ function renderAIRecommendations() {
 
                 return `
 
-                    <div class="product-row">
+                    <div
+                        class="product-row">
+
 
                         <div>
 
+                            <span class="ai">
+                                🤖 AI
+                            </span>
+
+
                             <b>
-                                🤖
+
                                 ${
                                     trigger
-                                    ? escapeHtml(
-                                        trigger.name
-                                      )
-                                    : "Məhsul"
+                                        ? escapeHtml(
+                                            trigger.name
+                                          )
+                                        : "Məhsul tapılmadı"
                                 }
+
                             </b>
 
-                            <br>
 
-                            <span class="small">
+                            →
 
-                                →
+                            <b>
 
                                 ${
                                     recommended
-                                    ? escapeHtml(
-                                        recommended.name
-                                      )
-                                    : "Məhsul"
+                                        ? escapeHtml(
+                                            recommended.name
+                                          )
+                                        : "Məhsul tapılmadı"
                                 }
 
-                                —
+                            </b>
 
+
+                            <br>
+
+
+                            <span class="small">
+
+                                AI qiyməti:
                                 ${
                                     Number(
                                         rule.combo_price
                                     ).toFixed(2)
                                 }
-
                                 AZN
+
+                            </span>
+
+
+                            <br>
+
+
+                            <span class="small">
+
+                                ${
+                                    rule.active
+                                        ? "🟢 Aktiv"
+                                        : "🔴 Deaktiv"
+                                }
 
                             </span>
 
                         </div>
 
 
-                        <button
-                            class="red"
-                            onclick="deleteAIRecommendation(
-                                ${rule.id}
-                            )"
-                        >
-                            🗑️ Sil
-                        </button>
+                        <div
+                            class="actions">
+
+
+                            <button
+                                class="${
+                                    rule.active
+                                        ? "orange"
+                                        : "green"
+                                }"
+                                onclick="
+                                    toggleAIRule(
+                                        ${rule.id},
+                                        ${rule.active}
+                                    )
+                                ">
+
+                                ${
+                                    rule.active
+                                        ? "Deaktiv et"
+                                        : "Aktiv et"
+                                }
+
+                            </button>
+
+
+                            <button
+                                class="red"
+                                onclick="
+                                    deleteAIRule(
+                                        ${rule.id}
+                                    )
+                                ">
+
+                                Sil
+
+                            </button>
+
+
+                        </div>
+
 
                     </div>
 
                 `;
 
-            })
-            .join("");
+            }
+
+        ).join("");
 
 }
 
 
-/* =========================
-   DELETE AI RULE
-========================= */
 
-async function deleteAIRecommendation(id) {
-
-    if (
-        !confirm(
-            "Bu AI təklifini silmək istəyirsən?"
-        )
-    ) return;
+/* ==================================================
+   TOGGLE AI RULE
+   ================================================== */
 
 
-    const { error } =
+async function toggleAIRule(
+    id,
+    active
+) {
+
+    const {
+        error
+    } =
         await supabaseClient
-            .from("ai_recommendations")
-            .delete()
-            .eq("id", id);
+
+            .from(
+                "ai_recommendations"
+            )
+
+            .update({
+
+                active:
+                    !active
+
+            })
+
+            .eq(
+                "id",
+                id
+            );
 
 
     if (error) {
 
         alert(
-            "AI təklifi silinmədi: " +
             error.message
         );
 
         return;
+
     }
 
 
-    loadAIRecommendations();
+    loadAIRules();
 
 }
 
 
-/* =========================
+
+/* ==================================================
+   DELETE AI RULE
+   ================================================== */
+
+
+async function deleteAIRule(id) {
+
+    if (
+        !confirm(
+            "Bu AI təklifini silmək istəyirsən?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+
+            .from(
+                "ai_recommendations"
+            )
+
+            .delete()
+
+            .eq(
+                "id",
+                id
+            );
+
+
+    if (error) {
+
+        alert(
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    loadAIRules();
+
+}
+
+
+
+/* ==================================================
    QR
-========================= */
+   ================================================== */
+
 
 function generateQRs() {
 
@@ -1704,29 +2274,6 @@ function generateQRs() {
         );
 
 
-    if (
-        !count ||
-        count < 1
-    ) {
-
-        alert(
-            "Ən azı 1 masa olmalıdır."
-        );
-
-        return;
-    }
-
-
-    if (count > 100) {
-
-        alert(
-            "Maksimum 100 masa."
-        );
-
-        return;
-    }
-
-
     const grid =
         document.getElementById(
             "qrGrid"
@@ -1736,8 +2283,24 @@ function generateQRs() {
     grid.innerHTML = "";
 
 
+    if (
+        !Number.isFinite(count) ||
+        count < 1
+    ) {
+
+        alert(
+            "Masa sayını düzgün yaz."
+        );
+
+        return;
+
+    }
+
+
     const baseUrl =
+
         window.location.origin +
+
         window.location.pathname
             .replace(
                 "admin.html",
@@ -1750,6 +2313,7 @@ function generateQRs() {
         table <= count;
         table++
     ) {
+
 
         const url =
             baseUrl +
@@ -1773,42 +2337,64 @@ function generateQRs() {
                 🪑 Masa ${table}
             </h3>
 
+
             <div
                 id="qr-${table}"
-                class="qr"
-            ></div>
-
-            <div class="small">
-                Masa ${table}
+                class="qr">
             </div>
+
+
+            <div
+                class="small">
+
+                Masa ${table}
+
+            </div>
+
 
             <br>
 
+
             <button
                 class="gray"
-                onclick="window.open(
-                    '${url}',
-                    '_blank'
-                )"
-            >
+                onclick="
+                    window.open(
+                        '${url}',
+                        '_blank'
+                    )
+                ">
+
                 Menyunu aç
+
             </button>
 
         `;
 
 
-        grid.appendChild(card);
+        grid.appendChild(
+            card
+        );
 
 
         new QRCode(
+
             document.getElementById(
                 "qr-" + table
             ),
+
             {
-                text: url,
-                width: 140,
-                height: 140
+
+                text:
+                    url,
+
+                width:
+                    140,
+
+                height:
+                    140
+
             }
+
         );
 
     }
@@ -1816,87 +2402,195 @@ function generateQRs() {
 }
 
 
-/* =========================
+
+/* ==================================================
+   ESCAPE HTML
+   ================================================== */
+
+
+function escapeHtml(text) {
+
+    return String(
+        text == null
+            ? ""
+            : text
+    )
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+
+/* ==================================================
    REALTIME ORDERS
-========================= */
+   ================================================== */
+
 
 supabaseClient
-    .channel("admin-orders")
+
+    .channel(
+        "admin-orders"
+    )
+
     .on(
+
         "postgres_changes",
+
         {
-            event: "*",
-            schema: "public",
-            table: "orders"
+
+            event:
+                "*",
+
+            schema:
+                "public",
+
+            table:
+                "orders"
+
         },
+
         () => {
 
             loadOrders();
 
         }
+
     )
+
     .subscribe();
 
 
-/* =========================
+
+/* ==================================================
    REALTIME MENU
-========================= */
+   ================================================== */
+
 
 supabaseClient
-    .channel("admin-menu")
+
+    .channel(
+        "admin-menu"
+    )
+
     .on(
+
         "postgres_changes",
+
         {
-            event: "*",
-            schema: "public",
-            table: "menu"
+
+            event:
+                "*",
+
+            schema:
+                "public",
+
+            table:
+                "menu"
+
         },
+
         () => {
 
             loadMenu();
 
         }
+
     )
+
     .subscribe();
 
 
-/* =========================
+
+/* ==================================================
    REALTIME AI
-========================= */
+   ================================================== */
+
 
 supabaseClient
-    .channel("admin-ai-recommendations")
+
+    .channel(
+        "admin-ai-rules"
+    )
+
     .on(
+
         "postgres_changes",
+
         {
-            event: "*",
-            schema: "public",
-            table: "ai_recommendations"
+
+            event:
+                "*",
+
+            schema:
+                "public",
+
+            table:
+                "ai_recommendations"
+
         },
+
         () => {
 
-            loadAIRecommendations();
+            loadAIRules();
 
         }
+
     )
+
     .subscribe();
 
 
-/* =========================
+
+/* ==================================================
    START
-========================= */
+   ================================================== */
 
-checkConnection();
 
-loadOrders();
+async function startAdmin() {
 
-loadMenu();
+    await checkConnection();
 
-loadAIRecommendations();
+    await loadOrders();
 
-generateQRs();
+    await loadMenu();
+
+    await loadAIRules();
+
+    generateQRs();
+
+}
+
+
+startAdmin();
+
 
 </script>
 
+
 </body>
+
 </html>
